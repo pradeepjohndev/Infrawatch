@@ -2,21 +2,31 @@
   "name": "infrawatch",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": " ",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pradeepjohndev/Infrawatch.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/pradeepjohndev/Infrawatch/issues"
+  },
+  "homepage": "https://github.com/pradeepjohndev/Infrawatch#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
+    "http": "^0.0.1-security",
     "mssql": "^12.2.0",
-    "nodemon": "^3.1.11"
+    "systeminformation": "^5.28.6",
+    "ws": "^8.18.3"
   }
 }

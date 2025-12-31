@@ -74,10 +74,10 @@ export default function Login() {
           </div>
         )}
 
-        {/* <p className="mt-4 text-sm text-gray-200">
+        <p className="mt-4 text-sm text-gray-200">
           Don't have an account?{" "}
           <a href="/register" className="text-blue-300 hover:underline">Register</a>
-        </p> */}
+        </p>
       </div>
     </div>
   );
