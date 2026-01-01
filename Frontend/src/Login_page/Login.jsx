@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
+import { CircleX,CircleCheck } from "lucide-react";
 axios.defaults.withCredentials = true;
 
 export default function Login() {
@@ -69,7 +69,7 @@ export default function Login() {
             }`}
           >
             
-            {isError ? <FaCircleXmark /> : <FaCircleCheck />}
+            {isError ? <CircleX /> : <CircleCheck />}
             <span>{msg}</span>
           </div>
         )}
