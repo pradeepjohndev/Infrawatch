@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { IoIosPeople } from "react-icons/io";
 import { FaPersonCircleCheck, FaPersonCircleXmark } from "react-icons/fa6";
 
-
 export default function Devices({ ws }) {
     const [total, setTotal] = useState(0);
     const [online, setOnline] = useState(0);

@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaArrowDown, FaComputer, FaWifi } from "react-icons/fa6";
-import { SiGooglecloudstorage } from "react-icons/si";
-import { AiFillThunderbolt } from "react-icons/ai";
-import { GrSystem } from "react-icons/gr";
-import { MdError } from "react-icons/md";
 import { GoDotFill } from "react-icons/go";
-import { FaArrowUp } from "react-icons/fa";
+import {ArrowUpRight, LaptopMinimal,Wifi ,HardDrive,ArrowDownRight,Activity,Cpu,CircleX,Dot} from "lucide-react"
 import Devices from "./Device.jsx";
 import DiskDonut from "../Components/Diskdonut.jsx";
 import Netlog from "../Components/Netlog.jsx";
@@ -120,8 +115,8 @@ export default function Dashboard() {
 
         return (
           <div /* style={themeStyles} */ key={pc.pcId} className={`pc ${pc.online ? "online" : "offline"}`} onClick={() => { setOpen(!Open) }}>
-            <h3>
-              <FaComputer className="icon" />{pc.online ? <GoDotFill style={{ color: "green" }} /> : <GoDotFill style={{ color: "red" }} />}{pc.pcId}
+            <h3 className="flex gap-5">
+              <LaptopMinimal className="icon" />{pc.online ? <GoDotFill style={{ color: "green", alignItems:"baseline"}} /> : <GoDotFill style={{ color: "red" }} />}{pc.pcId}
             </h3>
 
             <p className="time"><b>Last Update:</b> {lastUpdate}</p>
@@ -129,7 +124,7 @@ export default function Dashboard() {
             <p><b>Uptime:</b> {formatUptime(pc.stats.uptime)}</p>
 
             <div className="section" style={{ cursor: "pointer" }}>
-              <h4><GrSystem /> Static Information</h4>
+              <h4 className="flex gap-5"><Cpu /> Static Information</h4>
               <Collapse isOpened={Open} theme={{ collapse: "react-collapse", content: "react-collapse-content" }}>
                 <p><b>Manufacturer:</b> {pc.staticInfo.system.manufacturer}</p>
                 <p><b>Model:</b> {pc.staticInfo.system.model}</p>
@@ -143,7 +138,7 @@ export default function Dashboard() {
 
 
             <div className="section" style={{ cursor: "pointer" }} onClick={() => { setExpand(!Expand) }}>
-              <h4><AiFillThunderbolt /> Live Metrics</h4>
+              <h4 className="flex gap-5"><Activity /> Live Metrics</h4>
               <Collapse isOpened={Expand} theme={{ collapse: "react-collapse", content: "react-collapse-content" }}>
                 {pc.stats ? (
                   <>
@@ -166,7 +161,7 @@ export default function Dashboard() {
                     <p className="Ram_info"><b>CPU Load: {pc.stats.cpu.load} %</b></p>
 
                     <hr></hr>
-                    <h4><FaWifi /> Network</h4>
+                    <h4 className="flex gap-5"><Wifi /> Network</h4>
                     <p><b>IP:</b> {pc.stats.network.ip || "N/A"}</p>
                     <p><b>MAC:</b> {pc.stats.network.mac || "N/A"}</p>
                     <p><b>iface: </b>{pc.stats.network.iface || "N/A"}</p>
@@ -175,11 +170,11 @@ export default function Dashboard() {
                     <p>Evaluate your network speed and check for network issues to ensure your pc can smoothly access the internet</p>
                     <div className="Network_stats">
                       <div className="network_left" style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                        <p>Upload: {pc.stats.network.Upload}<FaArrowUp style={{ color: "red" }} /> Kb/sec </p>
-                        <p>Download:{pc.stats.network.download} <FaArrowDown style={{ color: "blue" }} />Kb/sec</p>
+                        <p>Upload: {pc.stats.network.Upload}<ArrowUpRight style={{ color: "red" }} /> Kb/sec </p>
+                        <p>Download:{pc.stats.network.download} <ArrowDownRight style={{ color: "blue" }} />Kb/sec</p>
 
                       </div>
-                      <div className="network_right">
+                      <div className="network_right flex gap-5">
                         <Netlog
                           upload={pc.stats.network.Upload}
                           download={pc.stats.network.download}
@@ -189,7 +184,7 @@ export default function Dashboard() {
                   <p><b>download: </b>{pc.stats.network.download}kb/sec</p> */}
 
                     <hr></hr>
-                    <h4><SiGooglecloudstorage /> Storage</h4>
+                    <h4 className="flex gap-5"><HardDrive /> Storage</h4>
                     {pc.stats.disks?.length ? (
                       <div style={{ display: "flex", justifyContent: "space-evenly", flexWrap: "wrap" }}>
                         {pc.stats.disks.map((disk, i) => (
@@ -221,11 +216,11 @@ export default function Dashboard() {
                         </tbody>
                       </table> */
                     ) : (
-                      <p><MdError /> No disk data</p>
+                      <p><CircleX /> No disk data</p>
                     )}
                   </>
                 ) : (
-                  <p><MdError /> No live data yet</p>
+                  <p><CircleX /> No live data yet</p>
                 )}
               </Collapse>
             </div>
