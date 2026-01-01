@@ -25,6 +25,7 @@
     "express": "^5.2.1",
     "express-session": "^1.18.2",
     "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.3",
     "mssql": "^12.2.0",
     "systeminformation": "^5.28.6",
     "ws": "^8.18.3"

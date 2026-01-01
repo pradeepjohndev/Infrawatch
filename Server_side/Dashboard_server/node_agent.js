@@ -1,8 +1,10 @@
 import WebSocket from "ws";
 import { system, cpu, osInfo, mem, currentLoad, networkInterfaces, time, fsSize } from "systeminformation";
 import si from "systeminformation"
+import dotenv from "dotenv";
+dotenv.config();
 
-const SERVER_URL = "ws://localhost:8080";
+const SERVER_URL = process.env.SERVER_URL
 
 const PC_ID = process.env.PC_ID || `PC-${Math.floor(Math.random() * 10000)}`;
 
@@ -25,7 +27,6 @@ function connect() {
       payload: await getStaticInfo()
     }));
 
-    /*  CHANGE #2: IMMEDIATE HEARTBEAT */
     sendHeartbeat();
 
     startFastMetrics();
@@ -45,8 +46,6 @@ function connect() {
     console.error("WebSocket error:", err.message);
   };
 }
-
-/* ---------------- STATIC INFO (ONCE) ---------------- */
 
 async function getStaticInfo() {
   const s = await system();
@@ -72,8 +71,6 @@ async function getStaticInfo() {
     }
   };
 }
-
-/* ---------------- DYNAMIC INFO (EVERY 1s) ---------------- */
 
 function startFastMetrics() {
   metricsInterval = setInterval(async () => {
@@ -131,8 +128,6 @@ function startFastMetrics() {
   }, 1000);
 }
 
-/* ---------------- HEARTBEAT ---------------- */
-
 function sendHeartbeat() {
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({
@@ -141,8 +136,6 @@ function sendHeartbeat() {
     }));
   }
 }
-
-/* ---------------- START ---------------- */
 
 connect();
 

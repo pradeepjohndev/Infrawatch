@@ -37,7 +37,6 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
-
     const pool = await getPool();
 
     const result = await pool.request()
@@ -53,10 +52,7 @@ app.post("/login", async (req, res) => {
 
     console.log("Entered password:", password);
     console.log("Stored hash:", user.passwordHash);
-
     const ok = await bcrypt.compare(password.trim(), user.passwordHash);
-
-    console.log("Compare result:", ok);
 
     if (!ok) {
         return res.status(401).json({ error: "Wrong password" });
