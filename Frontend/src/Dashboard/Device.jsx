@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { IoIosPeople } from "react-icons/io";
-import { FaPersonCircleCheck, FaPersonCircleXmark } from "react-icons/fa6";
+import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon } from 'lucide-react';
 
 export default function Devices({ ws }) {
     const [total, setTotal] = useState(0);
@@ -28,10 +27,19 @@ export default function Devices({ ws }) {
     }, [ws]);
 
     return (
-        <div className="devices" style={{ color: "white" }}>
-            <p><IoIosPeople />Total Devices: {total}</p>
-            <p><FaPersonCircleCheck /> Online: {online}</p>
-            <p><FaPersonCircleXmark /> Offline: {offline}</p>
+        <div className="devices" style={User}>
+            <p><UsersRoundIcon />Total Devices: {total}</p>
+            <p style={{ color: "#c7ffbf" }}><UserRoundCheckIcon /> Online: {online}</p>
+            <p style={{ color: "#ffc3c7" }}><UserRoundXIcon /> Offline: {offline}</p>
         </div>
     );
+}
+
+
+const User = { color: "white", 
+    display: "flex", 
+    gap: "20px", 
+    border: "1px solid white", 
+    padding: "10px", 
+    borderRadius: "8px" 
 }

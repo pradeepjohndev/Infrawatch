@@ -5,7 +5,7 @@ import Netlog from "../Components/Netlog";
 import Cpuload from "../Components/Cpuload";
 import RAMStackedBar from "../Components/RAMStackedBar";
 import { GoDotFill } from "react-icons/go";
-import {HardDrive,Wifi,Activity,Laptop,Cpu,ArrowUpRight,ArrowDownRight,CircleArrowRight,CircleArrowDown} from 'lucide-react';
+import { HardDrive, Wifi, Activity, Laptop, Cpu, ArrowUpRight, ArrowDownRight, CircleArrowRight, CircleArrowDown } from 'lucide-react';
 
 const gb = bytes => (bytes / 1024 ** 3).toFixed(2) + " GB";
 
@@ -83,33 +83,38 @@ export default function Pcpanel({ pc, now }) {
                     <Collapse isOpened={openLive}>
                         {pc.stats ? (
                             <>
+                            <p><b>Ram status:</b></p>
                                 <RAMStackedBar
                                     used={pc.stats.memory.used}
                                     free={pc.stats.memory.free}
                                     total={pc.stats.memory.total}
                                 />
 
-                                <p><b>RAM Used:</b> {gb(pc.stats.memory.used)}</p>
-                                <p><b>RAM Free:</b> {gb(pc.stats.memory.free)}</p>
-                                <p><b>Total RAM:</b> {gb(pc.stats.memory.total)}</p>
+                                <div className="flex justify-between mb-4 pb-5 ">
+                                    <p><b>RAM Used:</b> {gb(pc.stats.memory.used)}</p>
+                                    <p><b>RAM Free:</b> {gb(pc.stats.memory.free)}</p>
+                                    <p><b>Total RAM:</b> {gb(pc.stats.memory.total)}</p>
+                                </div>
+
+                                <p><b>CPU status:</b></p>
 
                                 <Cpuload value={pc.stats.cpu.load} color={cpuColor} />
-                                <p><b>CPU Load:</b> {pc.stats.cpu.load}%</p>
+                                <p className="text-center"><b>CPU Load:</b> {pc.stats.cpu.load}%</p>
 
-                                <h4><Wifi /> Network</h4>
-                                <p>Upload: {pc.stats.network.Upload} <ArrowUpRight /></p>
-                                <p>Download: {pc.stats.network.download} <ArrowDownRight /></p>
-                                <Netlog upload={pc.stats.network.Upload} download={pc.stats.network.download} />
+                                <div>
+                                    <h4 className="flex items-center gap-2 font-medium mb-1"><Wifi className="w-4 h-4" /> <p><b>Network status:</b></p></h4>
+                                    <p>Upload: {pc.stats.network.Upload} <ArrowUpRight className="inline w-4 h-4 text-red-700" /></p>
+                                    <p>Download: {pc.stats.network.download} <ArrowDownRight className="inline w-4 h-4  text-blue-700" /></p>
+                                    <Netlog upload={pc.stats.network.Upload} download={pc.stats.network.download} />
+                                </div>
 
-                                <h4><HardDrive /> Storage</h4>
-                                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                                    {pc.stats.disks?.length
-                                        ? pc.stats.disks.map((d, i) => <DiskDonut key={i} disk={d} />)
-                                        : <p><TriangleAlert /> No disk data</p>}
+                                <h4 className="flex gap-3 mt-5"><HardDrive /><p><b>Hard-disk status:</b></p></h4>
+                                <div style={{ display: "flex", gap: "100px", flexWrap: "wrap", justifyContent: "center" }}>
+                                    {pc.stats.disks?.length ? pc.stats.disks.map((d, i) => <DiskDonut key={i} disk={d} />) : <p>No disk data</p>}
                                 </div>
                             </>
                         ) : (
-                            <p><TriangleAlert /> No live data</p>
+                            <p>No live data</p>
                         )}
                     </Collapse>
                 </div>
