@@ -1,26 +1,10 @@
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import { Line } from "react-chartjs-2"; 
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from "chart.js";
 import { useEffect, useRef, useState } from "react";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 const MAX_POINTS = 20;
-
 const toMbps = (kbps = 0) => ((kbps * 8) / 1024).toFixed(2);
 
 export default function NetworkSpeedChart({ upload = 0, download = 0 }) {
@@ -38,7 +22,6 @@ export default function NetworkSpeedChart({ upload = 0, download = 0 }) {
 
   useEffect(() => {
     const time = new Date().toLocaleTimeString();
-
     const buffer = bufferRef.current;
 
     buffer.labels.push(time);

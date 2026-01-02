@@ -8,13 +8,14 @@ import "./Style.css";
 function App() {
   return (
     <>
-      <BrowserRouter>
+      <Dashboard />
+      {/* <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
-      </BrowserRouter>
+      </BrowserRouter> */}
 
     </>
   )

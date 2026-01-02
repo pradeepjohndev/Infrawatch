@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Collapse } from "react-collapse";
-import DiskDonut from "../Components/DiskDonut";
+import DiskDonut from "../Components/Diskdonut";
 import Netlog from "../Components/Netlog";
 import Cpuload from "../Components/Cpuload";
 import RAMStackedBar from "../Components/RAMStackedBar";
@@ -24,18 +24,10 @@ export default function Pcpanel({ pc, now }) {
     const [openStatic, setOpenStatic] = useState(false);
     const [openLive, setOpenLive] = useState(false);
 
-    const lastUpdate = pc.stats?.timestamp
-        ? new Date(pc.stats.timestamp).toLocaleTimeString()
-        : "N/A";
 
-    const latency = pc.stats?.timestamp
-        ? `${now - pc.stats.timestamp} ms`
-        : "N/A";
-
-    const cpuColor =
-        pc.stats.cpu.load > 80 ? "#dc2626" :
-            pc.stats.cpu.load > 50 ? "#f59e0b" :
-                "#22c55e";
+    const lastUpdate = pc.stats?.timestamp ? new Date(pc.stats.timestamp).toLocaleTimeString() : "N/A";
+    const cpuColor = pc.stats.cpu.load > 80 ? "#dc2626" : pc.stats.cpu.load > 50 ? "#f59e0b" : "#22c55e";
+    const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
 
     return (
         <div className={`pc ${pc.online ? "online" : "offline"}`}>
@@ -53,7 +45,7 @@ export default function Pcpanel({ pc, now }) {
 
             <Collapse isOpened={collapsed} theme={{ collapse: "react-collapse", content: "react-collapse-content" }}>
                 <p><b>Last Update:</b> {lastUpdate}</p>
-                <p><b>Latency:</b> {latency}</p>
+                <p><b>Latency:</b>{" "}{latency !== null ? `${latency} ms` : "N/A"}</p>
                 <p><b>Uptime:</b> {formatUptime(pc.stats.uptime)}</p>
 
                 <div className="section">
@@ -83,7 +75,7 @@ export default function Pcpanel({ pc, now }) {
                     <Collapse isOpened={openLive}>
                         {pc.stats ? (
                             <>
-                            <p><b>Ram status:</b></p>
+                                <p><b>Ram status:</b></p>
                                 <RAMStackedBar
                                     used={pc.stats.memory.used}
                                     free={pc.stats.memory.free}

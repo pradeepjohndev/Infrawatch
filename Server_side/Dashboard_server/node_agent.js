@@ -4,7 +4,8 @@ import si from "systeminformation"
 import dotenv from "dotenv";
 dotenv.config();
 
-const SERVER_URL = 'ws://localhost:8080';
+const SERVER_URL = '';
+//ws://localhost:8080
 
 const PC_ID = process.env.PC_ID || `PC-${Math.floor(Math.random() * 10000)}`;
 

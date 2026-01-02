@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  server:
+    build: ./Server_side
+    ports:
+      - "8080:8080"
+    restart: always
+
+frontend:
+  build: ./Frontend
+  ports:
+    - "3000:80"
+  depends_on:
+    - server
+  restart: always
+
+agent1:
+  build: ./Server_side
+  environment:
+    - PC_ID=PC-1
+  depends_on:
+    - server
+
+agent2:
+  build: ./Server_side
+  environment:
+    - PC_ID=PC-2
+  depends_on:
+    - server

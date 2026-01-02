@@ -1,21 +1,6 @@
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  BarController,
-  Tooltip,
-} from "chart.js";
-
-import { Bar } from "react-chartjs-2";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  BarController,
-  Tooltip
-);
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, BarController, Tooltip } from "chart.js"; 
+import { Bar } from "react-chartjs-2"; 
+ChartJS.register(CategoryScale, LinearScale, BarElement, BarController, Tooltip);
 
 export default function Cpuload({ label = "CPU", value = 0, color = "#22c55e" }) {
   const safeValue = Number(value) || 0;
