@@ -3,24 +3,28 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  BarController,
   Tooltip,
 } from "chart.js";
+
+import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  BarController,
   Tooltip
 );
 
-import { Bar } from "react-chartjs-2";
-export default function Cpuload({ label, value, color }) {
-    
+export default function Cpuload({ label = "CPU", value = 0, color = "#22c55e" }) {
+  const safeValue = Number(value) || 0;
+
   const data = {
     labels: [label],
     datasets: [
       {
-        data: [Math.min(value, 100)],
+        data: [Math.min(safeValue, 100)],
         backgroundColor: color,
         borderRadius: 6,
         barThickness: 18,
@@ -29,9 +33,10 @@ export default function Cpuload({ label, value, color }) {
   };
 
   const options = {
-    indexAxis: "y", 
+    indexAxis: "y",
     responsive: true,
     maintainAspectRatio: false,
+    animation: true,
     scales: {
       x: {
         min: 0,
@@ -55,9 +60,8 @@ export default function Cpuload({ label, value, color }) {
   };
 
   return (
-    <div style={{ height: "50px", marginBottom: "12px" }}>
+    <div style={{ height: "50px", width: "100%", marginBottom: "12px" }}>
       <Bar data={data} options={options} />
     </div>
   );
 }
-
