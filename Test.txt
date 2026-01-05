@@ -147,3 +147,24 @@ Kadence
 
 Vault EA40 Open Box (only if you can stretch a bit) 
 Bajaao Open Box
+
+
+
+version: "3.9"
+services:
+  server:
+    build: ./Server_side
+    ports:
+      - "8080:8080"
+    restart: always
+
+frontend:
+  build: ./Frontend
+  ports:
+    - "3000:80"
+  depends_on:
+    - server
+  restart: always
+
+docker compose down -v
+docker compose up --build --scale agent=5

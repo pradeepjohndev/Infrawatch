@@ -4,8 +4,9 @@ import si from "systeminformation"
 import dotenv from "dotenv";
 dotenv.config();
 
-const SERVER_URL = 'ws://192.168.4.14:8080';
-//ws://localhost:8080 ws://192.168.1.50:8080
+const SERVER_URL = process.env.SERVER_URL || 'ws://localhost:8080';
+console.log("Agent connecting to:", SERVER_URL);
+//ws://localhost:8080 ws://192.168.1.50:8080 //ws://192.168.4.14:8080
 
 const PC_ID = process.env.PC_ID || `PC-${Math.floor(Math.random() * 10000)}`;
 
@@ -44,7 +45,7 @@ function connect() {
   };
 
   socket.onerror = err => {
-    console.error("WebSocket error:", err.message);
+    console.error("WebSocket error:", err);
   };
 }
 
@@ -138,5 +139,5 @@ function sendHeartbeat() {
   }
 }
 
-connect();
+setTimeout(connect, 2000);
 

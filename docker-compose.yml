@@ -1,14 +1,31 @@
 version: "3.9"
 
 services:
+  backend:
+    build:
+      context: ./Server_side
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
   frontend:
     build: ./Frontend
     ports:
-      - "5173:5173"
+      - "5173:80"
     depends_on:
       - backend
 
-  backend:
-    build: ./Server_side/Dashboard_server
-    ports:
-      - "8080:8080"
+  agent:
+    build:
+      context: ./Server_side
+      dockerfile: Dockerfile.agent
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      SERVER_URL: ws://backend:8080
