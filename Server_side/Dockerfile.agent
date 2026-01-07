@@ -5,5 +5,4 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-
 CMD ["node", "Dashboard_server/node_agent.js"]
