@@ -168,3 +168,5 @@ frontend:
 
 docker compose down -v
 docker compose up --build --scale agent=5
+
+netstat -ano | findstr 8080

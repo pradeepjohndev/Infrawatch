@@ -6,11 +6,17 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
+app.set("trust proxy", true);
+
 const pcs = new Map();        
 const dashboards = new Set(); 
-
+  
 app.get("/", (_, res) => {
   res.send(" Server running");
+});
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 wss.on("connection", (ws) => {
@@ -35,7 +41,6 @@ wss.on("connection", (ws) => {
       return;
     }
 
-    /* --- DEVICE REGISTER ---- */
     if (data.type === "REGISTER") {
       console.log(" Device registered:", data.pcId);
 
@@ -81,6 +86,7 @@ wss.on("connection", (ws) => {
     }
   });
 });
+
 
 
 setInterval(() => {
@@ -136,6 +142,6 @@ function sendDashboardData() {
   });
 }
 
-server.listen(8080, () => {
+server.listen(8080, "0.0.0.0", () => {
   console.log(" WebSocket server running on port 8080");
 });

@@ -19,7 +19,6 @@ services:
       - "5173:80"
     depends_on:
       - backend
-
   agent:
     build:
       context: ./Server_side
