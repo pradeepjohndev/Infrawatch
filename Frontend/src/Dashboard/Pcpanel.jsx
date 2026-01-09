@@ -95,8 +95,8 @@ export default function Pcpanel({ pc, now }) {
 
                                 <div>
                                     <h4 className="flex items-center gap-2 font-medium mb-1"><Wifi className="w-4 h-4" /> <p><b>Network status:</b></p></h4>
-                                    <p>Upload: {pc.stats.network.Upload} <ArrowUpRight className="inline w-4 h-4 text-red-700" /></p>
-                                    <p>Download: {pc.stats.network.download} <ArrowDownRight className="inline w-4 h-4  text-blue-700" /></p>
+                                    <p>Upload: {pc.stats.network.Upload} kbps <ArrowUpRight className="inline w-4 h-4 text-red-700" /></p>
+                                    <p>Download: {pc.stats.network.download} kbps<ArrowDownRight className="inline w-4 h-4  text-blue-700" /></p>
                                     <Netlog upload={pc.stats.network.Upload} download={pc.stats.network.download} />
                                 </div>
 

@@ -136,20 +136,6 @@ server.listen(8080, () => {
   console.log("Socket.IO server running on port 8080");
 });
 
-
-
-
-Henrix 40C (or 40C Pro) (best bang-for-buck under ₹5k) 
-BAJAAO.COM
-
-Kadence Frontier 40" combo (great starter combo if pricing fits your ₹5k) 
-Kadence
-
-Vault EA40 Open Box (only if you can stretch a bit) 
-Bajaao Open Box
-
-
-
 version: "3.9"
 services:
   server:
