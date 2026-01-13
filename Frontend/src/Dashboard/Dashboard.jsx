@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Devices from "./Device";
 import PCPanel from "./Pcpanel";
+import Sidebar from "./Sidebar";
 
 export default function Dashboard() {
   const [pcs, setPcs] = useState([]);
@@ -42,21 +43,26 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div className="header">
-        <div className="side_left">
-          <h1>IT Asset Monitoring</h1>
-          <div className="time">Current Time: {time}</div>
-        </div>
-        <div className="side">
-          {ready && ws && <Devices ws={ws} />}
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 overflow-y-auto">
+          <div className="header">
+            <div className="side_left">
+              <h1>IT Asset Monitoring</h1>
+              <div className="time">Current Time: {time}</div>
+            </div>
+            <div className="side">
+              {ready && ws && <Devices ws={ws} />}
+            </div>
+          </div>
+
+          {pcs.length === 0 && <p>Connecting...</p>}
+
+          {pcs.map(pc => (
+            <PCPanel key={pc.pcId} pc={pc} now={now} />
+          ))}
         </div>
       </div>
-
-      {pcs.length === 0 && <p>Connecting...</p>}
-
-      {pcs.map(pc => (
-        <PCPanel key={pc.pcId} pc={pc} now={now} />
-      ))}
     </div>
   );
 }
