@@ -27,19 +27,10 @@ export default function Devices({ ws }) {
     }, [ws]);
 
     return (
-        <div className="devices" style={User}>
+        <div className="devices flex gap-5 border border-white p-2 rounded-lg text-white">
             <p><UsersRoundIcon />Total Devices: {total}</p>
             <p style={{ color: "#c7ffbf" }}><UserRoundCheckIcon /> Online: {online}</p>
             <p style={{ color: "#ffc3c7" }}><UserRoundXIcon /> Offline: {offline}</p>
         </div>
     );
-}
-
-
-const User = { color: "white", 
-    display: "flex", 
-    gap: "20px", 
-    border: "1px solid white", 
-    padding: "10px", 
-    borderRadius: "8px" 
 }

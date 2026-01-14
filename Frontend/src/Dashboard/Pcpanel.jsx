@@ -24,13 +24,12 @@ export default function Pcpanel({ pc, now }) {
     const [openStatic, setOpenStatic] = useState(false);
     const [openLive, setOpenLive] = useState(false);
 
-
     const lastUpdate = pc.stats?.timestamp ? new Date(pc.stats.timestamp).toLocaleTimeString() : "N/A";
     const cpuColor = pc.stats.cpu.load > 80 ? "#dc2626" : pc.stats.cpu.load > 50 ? "#f59e0b" : "#22c55e";
     const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
 
     return (
-        <div className="p-4">
+        <div className="p-1.5 ml-2 mr-2">
             <div className={`pc ${pc.online ? "online" : "offline"}`}>
 
                 <div style={row}>
