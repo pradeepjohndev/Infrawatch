@@ -104,7 +104,7 @@ setInterval(() => {
     sendCounts();
     sendDashboardData();
   }
-}, 5000);
+}, 1000);
 
 function sendCounts() {
   const totalDevices = pcs.size;

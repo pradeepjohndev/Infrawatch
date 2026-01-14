@@ -19,7 +19,7 @@ const percent = v => v.toFixed(1) + " %";
 
 async function resolvePcId() {
   try {
-    const os = await si.osInfo();
+    const oss = await si.osInfo();
     PC_ID = os.hostname || `PC-${Math.floor(Math.random() * 10000)}`;
   } catch {
     PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
