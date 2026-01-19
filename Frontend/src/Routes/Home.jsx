@@ -14,7 +14,7 @@ export default function Home() {
     let today = `${day} ${monthname}, ${year}`;
     return (
         <>
-            <div className="flex justify-between text-white">
+            <div className="flex justify-between text-white ">
                 <div className="m-5">
                     <h1>Hello user!</h1>
                     <span>Track all your system in one single place.</span>

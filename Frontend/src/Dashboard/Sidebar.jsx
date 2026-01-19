@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import logo from '../assets/react.svg';
-import { HousePlug, Menu, AlignHorizontalDistributeCenter, NotepadText, MessageSquareWarning, Settings, CircleUser, LogOut } from 'lucide-react';
+import { HousePlug, Menu, AlignHorizontalDistributeCenter, MessageSquareWarning, Settings, CircleUser, LogOut } from 'lucide-react';
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
     { icons: <HousePlug size={20} />, label: "Home", path: "/" },
     { icons: <AlignHorizontalDistributeCenter size={20} />, label: "Dashboard", path: "/dashboard" },
-    { icons: <NotepadText size={20} />, label: "Report", path: "/report" },
     { icons: <MessageSquareWarning size={20} />, label: "Alerts", path: "/alerts" },
     { icons: <Settings size={20} />, label: "Setting", path: "/setting" }
 ];
