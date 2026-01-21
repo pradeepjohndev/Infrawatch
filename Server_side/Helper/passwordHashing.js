@@ -11,4 +11,5 @@ async function passwordComparing(password, hashedPassword) {
   const result = await bcrypt.compare(password, hashedPassword);
   return result;
 }
+
 export { passwordComparing };
