@@ -3,8 +3,8 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const { poolPromise, sql } = require("./DB_login");
-const authenticateToken = require("./auth.middleware");
+const { poolPromise, sql } = require("./DB_conn/Database_connection.js");
+const authenticateToken = require("../Helper/auth.middleware.js");
 
 const app = express();
 app.use(express.json());

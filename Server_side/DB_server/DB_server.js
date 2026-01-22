@@ -1,141 +1,96 @@
-import express from "express";
-import bcrypt from "bcrypt";
-import session from "express-session";
-import cors from "cors";
-import { getPool } from "./DB.js";
-
-const app = express();
-
-app.use(cors({
-    origin: "http://localhost:5174",
-    credentials: true
-}));
-
-app.use(express.json());
-
-app.use(session({
-    secret: "mysecret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { httpOnly: true }
-}));
-
-app.post("/register", async (req, res) => {
-    const { username, password } = req.body;
-
-    const pool = await getPool();
-
-    const hash = await bcrypt.hash(password.trim(), 10);
-
-    await pool.request()
-        .input("u", username.trim())
-        .input("p", hash)
-        .query("INSERT INTO Users (username, passwordHash) VALUES (@u,@p)");
-
-    res.sendStatus(201);
-});
-
-app.post("/login", async (req, res) => {
-    const { username, password } = req.body;
-    const pool = await getPool();
-
-    const result = await pool.request()
-        .input("u", username.trim())
-        .query("SELECT * FROM Users WHERE username=@u");
-
-    if (!result.recordset.length) {
-        console.log("User not found:", username);
-        return res.status(401).json({ error: "User not found" });
-    }
-
-    const user = result.recordset[0];
-
-    console.log("Entered password:", password);
-    console.log("Stored hash:", user.passwordHash);
-    const ok = await bcrypt.compare(password.trim(), user.passwordHash);
-
-    if (!ok) {
-        return res.status(401).json({ error: "Wrong password" });
-    }
-
-    req.session.userId = user.id;
-    res.json({ message: "Logged in" });
-});
-
-app.get("/me", (req, res) => {
-    if (!req.session.userId) return res.sendStatus(401);
-    res.json({ userId: req.session.userId });
-});
-
-app.post("/logout", (req, res) => {
-    req.session.destroy(() => res.sendStatus(200));
-});
-
-app.listen(5000, () => console.log("Server running at http://localhost:5000"));
-
-
-/*
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
-
-const { poolPromise, sql } = require("./Database");
-const authenticateToken = require("./Auth_middleware");
+const { poolPromise, sql } = require("./Database.js"); // your DB file
 
 const app = express();
-app.use(express.json());
+const PORT = 5000;
+
 app.use(cors());
+app.use(express.json());
 
-app.post("/login", async (req, res) => {
+app.get("/health", (req, res) => {
+  res.json({ status: "Server is running" });
+});
+
+app.post("/api/agent/register", async (req, res) => {
+  const data = req.body;
+
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password)
-      return res.status(400).json({ error: "Email and password required" });
-
     const pool = await poolPromise;
 
-    const result = await pool
-      .request()
-      .input("email", sql.VarChar, email)
-      .query("SELECT * FROM Users WHERE email = @email");
+    await pool.request()
+      .input("agent_uuid", sql.VarChar, data.agent_id)
+      .input("hostname", sql.VarChar, data.hostname)
+      .input("os", sql.VarChar, data.os)
+      .input("architecture", sql.VarChar, data.architecture)
+      .input("cpu_model", sql.VarChar, data.cpu_model)
+      .input("cpu_cores", sql.Int, data.cpu_cores)
+      .input("total_ram_gb", sql.Float, data.total_ram_gb)
+      .input("manufacturer", sql.VarChar, data.manufacturer)
+      .input("model", sql.VarChar, data.model)
+      .query(`
+        IF NOT EXISTS (SELECT 1 FROM agents WHERE agent_uuid = @agent_uuid)
+        INSERT INTO agents (
+          agent_uuid, hostname, os, architecture,
+          cpu_model, cpu_cores, total_ram_gb,
+          manufacturer, model, last_seen
+        )
+        VALUES (
+          @agent_uuid, @hostname, @os, @architecture,
+          @cpu_model, @cpu_cores, @total_ram_gb,
+          @manufacturer, @model, GETDATE()
+        )
+      `);
 
-    const user = result.recordset[0];
-    if (!user)
-      return res.status(401).json({ error: "Invalid email or password" });
-
-    const isValid = await bcrypt.compare(password, user.password_hash);
-    if (!isValid)
-      return res.status(401).json({ error: "Invalid email or password" });
-
-    const token = jwt.sign(
-      {
-        sub: user.id,
-        email: user.email,
-        role: user.role
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.json({ token });
-
+    res.json({ message: "Agent registered" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    console.error("Register error:", err);
+    res.status(500).json({ error: "Agent registration failed" });
   }
 });
 
-app.get("/dashboard", authenticateToken, (req, res) => {
-  res.json({
-    message: "Welcome to dashboard",
-    user: req.user
-  });
+app.post("/api/metrics", async (req, res) => {
+  const data = req.body;
+
+  try {
+    const pool = await poolPromise;
+
+    const agent = await pool.request()
+      .input("agent_uuid", sql.VarChar, data.agent_id)
+      .query("SELECT agent_id FROM agents WHERE agent_uuid = @agent_uuid");
+
+    if (!agent.recordset.length) {
+      return res.status(404).json({ error: "Agent not registered" });
+    }
+
+    const agentId = agent.recordset[0].agent_id;
+
+    await pool.request()
+      .input("agent_id", sql.Int, agentId)
+      .input("cpu_usage", sql.Float, data.cpu_usage)
+      .input("ram_usage", sql.Float, data.ram_usage)
+      .input("uptime_minutes", sql.BigInt, data.uptime_minutes)
+      .query(`
+        INSERT INTO system_metrics (
+          agent_id, cpu_usage, ram_usage, uptime_minutes
+        )
+        VALUES (
+          @agent_id, @cpu_usage, @ram_usage, @uptime_minutes
+        )
+      `);
+
+    await pool.request()
+      .input("agent_id", sql.Int, agentId)
+      .query("UPDATE agents SET last_seen = GETDATE() WHERE agent_id = @agent_id");
+
+    res.json({ message: "Metrics stored" });
+  } catch (err) {
+    console.error("Metrics error:", err);
+    res.status(500).json({ error: "Metrics insert failed" });
+  }
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
-*/
