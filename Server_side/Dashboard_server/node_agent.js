@@ -10,7 +10,7 @@ const SERVER_URL = process.env.SERVER_URL || "ws://localhost:8080";
 console.log("Agent connecting to:", SERVER_URL);
 
 const DB_SERVER_URL = process.env.DB_SERVER_URL || "http://localhost:8080";
-const DB_INTERVAL = 10000;
+const DB_INTERVAL = process.env.DB_INTERVAL || 10000;
 
 let dbInterval;
 let staticSentToDB = false;
