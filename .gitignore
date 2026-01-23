@@ -4,4 +4,4 @@ dist/
 build/
 .next/
 .cache/
-.Test.txt/
+Test.txt/
