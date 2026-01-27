@@ -9,7 +9,6 @@ import "./App.css";
 import "./Style.css";
 import Sidebar from "./Dashboard/Sidebar";
 
-
 export default function App() {
   return (
     <div className="flex h-screen overflow-hidden">
