@@ -15,7 +15,7 @@ const dashboards = new Set();
 
 app.set("trust proxy", true);
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
 app.get("/", (_, res) => {
   res.send("Server running");
@@ -116,7 +116,11 @@ function sendCounts() {
 
   const msg = JSON.stringify({
     type: "COUNTS_UPDATE",
-    payload: { totalDevices, onlineDevices, offlineDevices }
+    payload: {
+      totalDevices,
+      onlineDevices,
+      offlineDevices,
+    }
   });
 
   dashboards.forEach(ws => {
