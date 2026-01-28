@@ -2,7 +2,7 @@ import WebSocket from "ws";
 import dotenv from "dotenv";
 import si from "systeminformation";
 import axios from "axios";
-import os from "os"; 
+import os from "os";
 
 dotenv.config();
 

@@ -65,7 +65,7 @@ export default function Home({ ws }) {
             <div className="flex justify-between text-white ">
                 <div className="m-5">
                     <h1>Hello user!</h1>
-                    <span>Track all your system in one single place.</span>
+                    <span>Track all your system's in one single place.</span>
                 </div>
                 <div className="border rounded-4xl h-10 mt-8 p-8 bg-gray-700 flex items-center">
                     <span className="text-white font-bold bg-gray-900 h-10 w-10 rounded-4xl flex items-center justify-center"><CalendarDays /></span>
@@ -113,7 +113,7 @@ export default function Home({ ws }) {
                 <div className="div5 bg-linear-to-br from-amber-700 to-amber-800 rounded-2xl p-6 text-white">
                     <div className="flex justify-between mb-4">
                         <h3 className="text-xl font-bold">
-                            Recently Added Devices<br></br>
+                            Recently Connected Device's<br></br>
                             <p className="text-white text-sm">Check all the devices</p>
                         </h3>
                         <Link to="/dashboard">
@@ -121,7 +121,7 @@ export default function Home({ ws }) {
                         </Link>
                     </div>
 
-                    <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                    <div className="space-y-2 max-h-98 overflow-y-auto scrollbar-color-blue-200 pr-1">
                         {recentDevices.length === 0 && (<p className="text-white/70 text-sm">No devices connected yet</p>)}
                         {recentDevices.map((pc) => (<RecentPCItem key={pc.pcId} pc={pc} />))}
                     </div>
