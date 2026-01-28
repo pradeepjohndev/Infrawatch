@@ -62,8 +62,8 @@ ffecec
 .parent {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  gap:14px;
+  grid-template-rows: repeat(4, 1fr);
+  gap: 14px;
 }
 
 .parent > div {
@@ -71,19 +71,31 @@ ffecec
 }
 
 .div1 {
-  grid-area: 1 / 1 / 4 / 4;
+  grid-column: span 3 / span 3;
+  grid-row: span 3 / span 3;
 }
+
 .div2 {
-  grid-area: 4 / 1 / 6 / 2;
+  grid-row: span 2 / span 2;
+  grid-column-start: 1;
+  grid-row-start: 4;
 }
+
 .div3 {
-  grid-area: 4 / 2 / 6 / 3;
+  grid-row: span 2 / span 2;
+  grid-column-start: 2;
+  grid-row-start: 4;
 }
+
 .div4 {
-  grid-area: 4 / 3 / 6 / 4;
+  grid-row: span 2 / span 2;
+  grid-column-start: 3;
+  grid-row-start: 4;
 }
+
 .div5 {
-  grid-area: 1 / 4 / 6 / 6; 
+  grid-column: span 2 / span 2;
+  grid-row: span 4 / span 4;
+  grid-column-start: 4;
+  grid-row-start: 1;
 }
-
-

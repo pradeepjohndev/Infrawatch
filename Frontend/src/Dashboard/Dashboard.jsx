@@ -45,7 +45,7 @@ export default function Dashboard() {
 
    const filteredAndSortedPcs = useMemo(() => {
     let result = pcs.filter((pc) => {
-      const matchesSearch = pc.pcId || pc.ip || pc.hostname
+      const matchesSearch = pc.pcId 
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
