@@ -3,7 +3,7 @@ import Login from "./Login_page/Login";
 import Register from "./Login_page/Register";
 import Home from "./Routes/home.jsx";
 import Dashboard from "./Dashboard/Dashboard.jsx";
-import Alerts from "./Routes/Alert.jsx";
+import Alerts from "./Routes/Alerts.jsx";
 import Setting from "./Routes/Setting.jsx";
 import "./App.css";
 import "./Style.css";
@@ -17,7 +17,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/Alerts" element={<Alerts />} />
           <Route path="/setting" element={<Setting />} />
         </Routes>
       </main>
@@ -36,7 +36,6 @@ export default function App() {
 //           <Route path="/dashboard" element={<Dashboard />} />
 //         </Routes>
 //       </BrowserRouter> */}
-
 //     </>
 //   )
 // }

@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 const menuItems = [
     { icons: <HousePlug size={20} />, label: "Home", path: "/" },
     { icons: <AlignHorizontalDistributeCenter size={20} />, label: "Dashboard", path: "/dashboard" },
-    { icons: <MessageSquareWarning size={20} />, label: "Alerts", path: "/alerts" },
+    { icons: <MessageSquareWarning size={20} />, label: "Alerts", path: "/Alerts" },
     { icons: <Settings size={20} />, label: "Setting", path: "/setting" }
 ];
 

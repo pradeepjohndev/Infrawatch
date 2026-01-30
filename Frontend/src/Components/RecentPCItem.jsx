@@ -7,20 +7,22 @@ function timeAgo(timestamp) {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
 
   if (seconds < 5) return "just now";
-  if (seconds < 60) return `${seconds}s ago`;
+  if (seconds < 60) return `Disconnected ${seconds}s ago`;
 
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  let sec = Math.floor(seconds % 60);
+  if (minutes < 60) return `Disconnected ${minutes}m ${sec}s ago`;
 
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  let min = Math.floor(minutes % 60);
+  if (hours < 24) return `Disconnected ${hours}h ${min} ago`;
 
   const days = Math.floor(hours / 24);
-  return `${days}d ago`;
+  return `Disconnected ${days}d ago`;
 }
 
 export default function RecentPCItem({ pc }) {
-  const now = useNow(1000);
+  const now = useNow(10000);
   return (
     <>
       <div className="flex items-center justify-between bg-white/10 hover:bg-white/20 transition-colors rounded-xl px-4 py-3">
