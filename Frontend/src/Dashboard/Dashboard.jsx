@@ -4,23 +4,13 @@ import PCPanel from "./Pcpanel";
 import { Link } from "react-router-dom";
 import { OctagonAlert } from "lucide-react"
 
-export default function Dashboard() {
+export default function Dashboard({ clock, now }) {
   const [pcs, setPcs] = useState([]);
-  const [time, setTime] = useState("");
-  const [now, setNow] = useState(() => Date.now());
   const [ws, setWs] = useState(null);
   const [ready, setReady] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("ONLINE_FIRST");
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setTime(new Date().toLocaleTimeString());
-      setNow(Date.now());
-    }, 1000);
-    return () => clearInterval(t);
-  }, []);
 
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:8080");
@@ -72,7 +62,7 @@ export default function Dashboard() {
         <div className="header">
           <div className="side_left">
             <h1>IT Asset Monitoring</h1>
-            <div className="time">Current Time: {time}</div>
+            <div className="time">Current Time: {clock}</div>
           </div>
           <div className="side">
             {ready && ws && <Devices ws={ws} />}

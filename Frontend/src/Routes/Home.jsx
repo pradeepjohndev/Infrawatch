@@ -2,24 +2,13 @@ import { CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";
 import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon } from 'lucide-react';
 import RecentPCItem from "../Components/RecentPCItem";
-import Devices from "../Dashboard/Device";
 import { Link } from 'react-router-dom';
 
-export default function Home({ ws }) {
-    const date = new Date();
+export default function Home({ ws, today }) {
     const [pcs, setPcs] = useState([]);
     const [ready, setReady] = useState(false);
-    
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    let monthname = null;
-    const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
-    monthname = monthNames[month - 1];
-    const day = date.getDate();
-
     const recentDevices = pcs.slice(-10).reverse();
 
-    let today = `${day} ${monthname}, ${year}`;
     const [deviceCounts, setDeviceCounts] = useState({
         total: 0,
         online: 0,

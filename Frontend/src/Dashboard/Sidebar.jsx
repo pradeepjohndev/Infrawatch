@@ -2,9 +2,10 @@ import { useState } from 'react'
 import logo from '../assets/react.svg';
 import { HousePlug, Menu, AlignHorizontalDistributeCenter, MessageSquareWarning, Settings, CircleUser, LogOut } from 'lucide-react';
 import { NavLink } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const menuItems = [
-    { icons: <HousePlug size={20} />, label: "Home", path: "/" },
+    { icons: <HousePlug size={20} />, label: "Home", path: "/home" },
     { icons: <AlignHorizontalDistributeCenter size={20} />, label: "Dashboard", path: "/dashboard" },
     { icons: <MessageSquareWarning size={20} />, label: "Alerts", path: "/Alerts" },
     { icons: <Settings size={20} />, label: "Setting", path: "/setting" }
@@ -46,10 +47,13 @@ export default function Sidebar() {
                     <div><CircleUser size={30} /></div>
                     <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden flex items-center gap-22`}>
                         <p>user1</p>
-                        <button className='text-sm text-gray-300 rounded-4xl bg-blue-500 hover:bg-blue-700 hover:border duration-500 p-1.5'><LogOut onClick={() => alert('User profile clicked')} className='hover:text-red-500' /></button>
+                        <Link to="/not_found">
+                            <button className='text-sm text-gray-300 rounded-4xl bg-blue-500 hover:bg-blue-700 hover:border duration-500 p-1.5'>
+                                <LogOut className='hover:text-red-500' /></button>
+                        </Link>
                     </div>
                 </div>
             </nav>
-        </aside>
+        </aside >
     )
 }

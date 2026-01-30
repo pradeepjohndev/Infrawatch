@@ -29,5 +29,4 @@ const poolPromise = new sql.ConnectionPool(config)
     throw err;
   });
 
-
 export { sql, poolPromise };

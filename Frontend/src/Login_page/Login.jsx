@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { CircleX,CircleCheck } from "lucide-react";
+import { CircleX, CircleCheck } from "lucide-react";
 axios.defaults.withCredentials = true;
 
 export default function Login() {
@@ -28,7 +28,7 @@ export default function Login() {
       setMsg("Login successful");
       setIsError(false);
 
-      setTimeout(() => navigate("/dashboard"), 1000);
+      setTimeout(() => navigate("/home"), 1000);
     } catch {
       setMsg("Login failed");
       setIsError(true);
@@ -64,11 +64,10 @@ export default function Login() {
 
         {msg && (
           <div
-            className={`mt-4 flex items-center gap-2 rounded p-3 text-sm text-white ${
-              isError ? "bg-red-600" : "bg-green-600"
-            }`}
+            className={`mt-4 flex items-center gap-2 rounded p-3 text-sm text-white ${isError ? "bg-red-600" : "bg-green-600"
+              }`}
           >
-            
+
             {isError ? <CircleX /> : <CircleCheck />}
             <span>{msg}</span>
           </div>

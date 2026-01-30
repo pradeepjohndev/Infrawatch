@@ -1,32 +1,45 @@
 import React, { useState } from "react";
+import { Calendar, Clock } from "lucide-react";
 
-export default function Alerts() {
+export default function Alerts({ today, clock }) {
     const [search, setSearch] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
 
     return (
         <>
-            <h1 className="text-white p-5">Reports</h1>
-            <div className="flex gap-4 p-4 text-white max-w-10/12">
-                <div className="" >
-                    <h3>Search</h3>
-                    <input className=" bg-gray-100 flex-1 p-2 rounded border focus:border-sky-500 focus:outline-2 focus:outline-blue-500 hover:cursor-type text-black" type="text" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                    {search && <p>Selected date: {search}</p>}
-                </div>
-
+            <div className="text-white p-4 flex justify-between">
                 <div className="">
-                    <h3>Calendar</h3>
-                    <input className=" bg-gray-100 flex-1 p-2 rounded border focus:border-sky-500 focus:outline-2 focus:outline-blue-500 hover:cursor-type text-black" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                    {date && <p>Selected date: {date}</p>}
+                    <h1>Inspect</h1>
+                    <span>look on to all your device's history</span>
                 </div>
-
-                <div className="">
-                    <h3>Timer</h3>
-                    <input className=" bg-gray-100 flex-1 p-2 rounded border focus:border-sky-500 focus:outline-2 focus:outline-blue-500 hover:cursor-type text-black" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-                    {time && <p>Selected date: {time}</p>}
+                <div className="border rounded-4xl h-10 p-8 mt-2 bg-gray-700 flex items-center gap-2">
+                    <Calendar />{today}<br></br><Clock />{clock}
                 </div>
             </div>
+            <div className="flex items-center gap-4 p-4 text-white w-full">
+                <input type="text" placeholder="Search by PC ID or Hostname" value={search} onChange={(e) => setSearch(e.target.value)}
+                    className="flex-1 bg-gray-200 text-black px-2 py-2 rounded-md border focus:border-sky-500 focus:outline-none" />
+
+                <input type="date" value={date} onChange={(e) => setDate(e.target.value)}
+                    className="flex-1 bg-gray-200 text-black px-3 py-2 rounded-md border focus:border-sky-500 focus:outline-none" />
+
+                <input type="time" value={time} onChange={(e) => setTime(e.target.value)}
+                    className="flex-1 bg-gray-200 text-black px-3 py-2 rounded-md border focus:border-sky-500 focus:outline-none" />
+            </div>
+
+            {search && date && time && (
+                <div className="p-2 mx-4 rounded-lg text-white flex items-center justify-between">
+                    <span>
+                        Would you like to look for{" "}
+                        <strong>{search}</strong> system information on{" "}
+                        <strong>{date}</strong> at{" "}
+                        <strong>{time}</strong>?
+                    </span>
+
+                    <button onClick={() => alert(`${search} system information from ${date} at ${time}`)}
+                        className="ml-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md text-white font-medium">View Report</button>
+                </div>)}
         </>
     );
 }
@@ -34,7 +47,4 @@ export default function Alerts() {
 
 
 
-// q-22min-11km - 2264.00
-// m-1h8min-49km - 2201.70
-// w-1h10min-48km - 2412.20
 
