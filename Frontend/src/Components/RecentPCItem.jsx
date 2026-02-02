@@ -3,7 +3,6 @@ import { useNow } from "../Helper/useNow.jsx";
 
 function timeAgo(timestamp) {
   if (!timestamp) return "unknown";
-
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
 
   if (seconds < 5) return "just now";
@@ -28,9 +27,7 @@ export default function RecentPCItem({ pc }) {
       <div className="flex items-center justify-between bg-white/10 hover:bg-white/20 transition-colors rounded-xl px-4 py-3">
         <div className="flex items-center gap-3">
           <Laptop className="w-5 h-5 text-white/80" />
-          <span className="font-medium text-white">
-            {pc.hostname || pc.pcId}
-          </span>
+          <span className="font-medium text-white">{pc.hostname || pc.pcId}</span>
         </div>
 
         <span className="text-sm text-white/50">

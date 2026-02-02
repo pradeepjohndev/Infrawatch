@@ -1,6 +1,5 @@
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend} from "chart.js";
-
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const toGB = (bytes = 0) => Number((bytes / (1024 ** 3)).toFixed(2));
@@ -46,7 +45,7 @@ export default function RAMStackedBar({ used, free }) {
       x: {
         stacked: true,
         min: 0,
-        max: maxGB, 
+        max: maxGB,
         title: {
           display: true,
           text: "GB"

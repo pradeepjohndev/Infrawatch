@@ -63,7 +63,7 @@ export default function Home({ ws, today }) {
             </div>
             <div className="parent h-3/4 w-overflow-hidden m-4">
                 <div className="div1 bg-amber-300"></div>
-                <div className="div2 bg-linear-to-br from-blue-100 to-blue-400 rounded-2xl p-6">
+                <div className="div2 bg-linear-to-br from-blue-100 to-blue-400  hover:from-blue-200 hover:to-blue-500 rounded-2xl p-6 duration-300 transition ease-in-out hover:scale-105">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-blue-400 rounded-xl">
@@ -75,7 +75,7 @@ export default function Home({ ws, today }) {
                     </div>
                 </div>
 
-                <div className="div3 bg-linear-to-br from-green-100 to-green-400 rounded-2xl p-6">
+                <div className="div3 bg-linear-to-br from-green-100 to-green-400  hover:from-green-200 hover:to-green-500 rounded-2xl p-6 duration-300 transition ease-in-out hover:scale-105">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-green-400 rounded-xl">
@@ -87,7 +87,7 @@ export default function Home({ ws, today }) {
                     </div>
                 </div>
 
-                <div className="div4 bg-linear-to-br from-red-100 to-red-400 rounded-2xl p-6">
+                <div className="div4 bg-linear-to-br from-red-100 to-red-400 rounded-2xl p-6 hover:from-red-200 hover:to-red-500 duration-300 transition ease-in-out hover:scale-105">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-red-400 rounded-xl">
@@ -111,11 +111,10 @@ export default function Home({ ws, today }) {
                     </div>
 
                     <div className="space-y-2 max-h-98 overflow-y-auto scrollbar-color-blue-200 pr-1">
-                        {recentDevices.length === 0 && (<p className="text-white/70 text-sm">No devices connected yet</p>)}
+                        {recentDevices.length === 0 && (<p className="text-white/70 text-sm">No devices connected yet...</p>)}
                         {recentDevices.map((pc) => (<RecentPCItem key={pc.pcId} pc={pc} />))}
                     </div>
                 </div>
-
             </div>
 
         </>

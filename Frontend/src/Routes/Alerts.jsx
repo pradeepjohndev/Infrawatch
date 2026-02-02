@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Calendar, Clock } from "lucide-react";
+import Pcpanel from "../Dashboard/Pcpanel";
 
 export default function Alerts({ today, clock }) {
     const [search, setSearch] = useState("");
@@ -37,9 +38,10 @@ export default function Alerts({ today, clock }) {
                         <strong>{time}</strong>?
                     </span>
 
-                    <button onClick={() => alert(`${search} system information from ${date} at ${time}`)}
+                    <button onClick={() => alert(`"${search}" system information from ${date} at ${time}`)}
                         className="ml-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-md text-white font-medium">View Report</button>
                 </div>)}
+
         </>
     );
 }

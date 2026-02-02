@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import Devices from "./Device";
+import Devices from "../Components/Device";
 import PCPanel from "./Pcpanel";
 import { Link } from "react-router-dom";
 import { OctagonAlert } from "lucide-react"
@@ -71,7 +71,7 @@ export default function Dashboard({ clock, now }) {
         <div className="flex gap-4 p-4">
           <input type="text" placeholder="Search by PC ID or Hostname" value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 p-2 rounded border focus:border-sky-500 focus:outline-2 focus:outline-blue-500 bg-gray-200 hover:cursor-pointer" />
+            className="flex-1 p-2 rounded border focus:border-sky-500 focus:outline-2 focus:outline-blue-500 bg-gray-200 hover:cursor-type" />
 
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="p-2 rounded border focus:border-sky-500 focus:outline-2 focus:outline-blue-700 bg-gray-200 hover:cursor-pointer">
             <option value="ALL">All</option>
