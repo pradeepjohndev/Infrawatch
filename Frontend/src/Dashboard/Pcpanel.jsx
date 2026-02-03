@@ -25,7 +25,14 @@ export default function Pcpanel({ pc, now }) {
     const [openLive, setOpenLive] = useState(false);
 
     const lastUpdate = pc.stats?.timestamp ? new Date(pc.stats.timestamp).toLocaleTimeString() : "N/A";
-    const cpuColor = pc.stats.cpu.load > 80 ? "#dc2626" : pc.stats.cpu.load > 50 ? "#f59e0b" : "#22c55e";
+    const cpuLoad = pc.stats?.cpu?.load;
+    const cpuColor = typeof cpuLoad === "number"
+        ? cpuLoad > 80
+            ? "#dc2626"
+            : cpuLoad > 50
+                ? "#f59e0b"
+                : "#22c55e"
+        : "#94a3b8";
     const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
 
     return (
@@ -46,7 +53,7 @@ export default function Pcpanel({ pc, now }) {
                 <Collapse isOpened={collapsed} theme={{ collapse: "react-collapse", content: "react-collapse-content" }}>
                     <p><b>Last Update:</b> {lastUpdate}</p>
                     <p><b>Latency:</b>{" "}{latency !== null ? `${latency} ms` : "N/A"}</p>
-                    <p><b>Uptime:</b> {formatUptime(pc.stats.uptime)}</p>
+                    <p><b>Uptime:</b> {pc.stats?.uptime ? formatUptime(pc.stats.uptime) : "N/A"}</p>
 
                     <div className="section">
                         <div style={row}>
@@ -57,10 +64,10 @@ export default function Pcpanel({ pc, now }) {
                         </div>
 
                         <Collapse isOpened={openStatic}>
-                            <p><b>Manufacturer:</b> {pc.staticInfo.system.manufacturer}</p>
-                            <p><b>Model:</b> {pc.staticInfo.system.model}</p>
-                            <p><b>CPU:</b> {pc.staticInfo.cpu.brand}</p>
-                            <p><b>OS:</b> {pc.staticInfo.os.distro}</p>
+                            <p><b>Manufacturer:</b> {pc.staticInfo?.system?.manufacturer ?? "N/A"}</p>
+                            <p><b>Model:</b> {pc.staticInfo?.system?.model ?? "N/A"}</p>
+                            <p><b>CPU:</b> {pc.staticInfo?.cpu?.brand ?? "N/A"}</p>
+                            <p><b>OS:</b> {pc.staticInfo?.os?.distro ?? "N/A"}</p>
                         </Collapse>
                     </div>
 
@@ -90,14 +97,14 @@ export default function Pcpanel({ pc, now }) {
 
                                     <p><b>CPU status:</b></p>
 
-                                    <Cpuload value={pc.stats.cpu.load} color={cpuColor} />
-                                    <p className="text-center"><b>CPU Load:</b> {pc.stats.cpu.load}%</p>
+                                    <Cpuload value={cpuLoad ?? 0} color={cpuColor} />
+                                    <p className="text-center"><b>CPU Load:</b> {typeof cpuLoad === "number" ? `${cpuLoad}%` : "N/A"}</p>
 
                                     <div>
                                         <h4 className="flex items-center gap-2 font-medium mb-1"><Wifi className="w-4 h-4" /> <p><b>Network status:</b></p></h4>
-                                        <p>Upload: {pc.stats.network.Upload} kbps <ArrowUpRight className="inline w-4 h-4 text-red-700" /></p>
-                                        <p>Download: {pc.stats.network.download} kbps<ArrowDownRight className="inline w-4 h-4  text-blue-700" /></p>
-                                        <Netlog upload={pc.stats.network.Upload} download={pc.stats.network.download} />
+                                        <p>Upload: {pc.stats?.network?.Upload ?? "N/A"} kbps <ArrowUpRight className="inline w-4 h-4 text-red-700" /></p>
+                                        <p>Download: {pc.stats?.network?.download ?? "N/A"} kbps<ArrowDownRight className="inline w-4 h-4  text-blue-700" /></p>
+                                        <Netlog upload={pc.stats?.network?.Upload ?? 0} download={pc.stats?.network?.download ?? 0} />
                                     </div>
 
                                     <h4 className="flex gap-3 mt-5"><HardDrive /><p><b>Hard-disk status:</b></p></h4>
