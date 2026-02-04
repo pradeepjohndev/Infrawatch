@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Login_page/Login";
 import Register from "./Login_page/Register";
-import Home from "./Routes/Home.jsx";
+import Home from "./Routes/home.jsx";
+import Inspect from "./Routes/Inspect.jsx";
 import Dashboard from "./Dashboard/Dashboard.jsx";
 import Alerts from "./Routes/Alerts.jsx";
 import Setting from "./Routes/Setting.jsx";
@@ -33,7 +34,8 @@ export default function App() {
         <Routes>
           <Route path="/home" element={<Home today={today} />} />
           <Route path="/dashboard" element={<Dashboard clock={clock} now={now} />} />
-          <Route path="/Alerts" element={<Alerts today={today} clock={clock} />} />
+          <Route path="/Alerts" element={<Alerts />} />
+          <Route path="Inspect" element={<Inspect today={today} clock={clock} />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/not_found" element={<Not_Found />} />
         </Routes>

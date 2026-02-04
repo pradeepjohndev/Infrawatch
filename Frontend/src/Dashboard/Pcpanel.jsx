@@ -8,6 +8,12 @@ import { GoDotFill } from "react-icons/go";
 import { HardDrive, Wifi, Activity, Laptop, Cpu, ArrowUpRight, ArrowDownRight, CircleArrowRight, CircleArrowDown } from 'lucide-react';
 
 const gb = bytes => (bytes / 1024 ** 3).toFixed(2) + " GB";
+const THRESHOLDS = {
+    cpu: 50,
+    ram: 50,
+    storage: 50,
+    network: 50
+};
 
 function formatUptime(sec) {
     const d = Math.floor(sec / 86400);
@@ -19,6 +25,38 @@ function formatUptime(sec) {
     return `${d ? d + "d " : ""}${h}h ${m}m ${s}s`;
 }
 
+function calculateSeverity(pc) {
+    if (!pc.stats) return "NORMAL";
+
+    let abnormalCount = 0;
+    let storage = null;
+    const cpu = pc.stats?.cpu?.load;
+    const ram = pc.stats?.memory?.used && pc.stats?.memory?.total ? (pc.stats.memory.used / pc.stats.memory.total) * 100 : null;
+    if (pc.stats?.disks?.length) {
+        let used = 0;
+        let total = 0;
+
+        pc.stats.disks.forEach(d => {
+            used += d.used;
+            total += d.size;
+        });
+
+        storage = total ? (used / total) * 100 : null;
+    }
+
+    const network = pc.stats?.network?.Upload && pc.stats?.network?.download ?
+        Math.max(pc.stats.network.Upload, pc.stats.network.download) : null;
+
+    if (typeof cpu === "number" && cpu >= THRESHOLDS.cpu) abnormalCount++;
+    if (typeof ram === "number" && ram >= THRESHOLDS.ram) abnormalCount++;
+    if (typeof storage === "number" && storage >= THRESHOLDS.storage) abnormalCount++;
+    if (typeof network === "number" && network >= THRESHOLDS.network) abnormalCount++;
+
+    if (abnormalCount >= 3) return "CRITICAL";
+    if (abnormalCount === 2) return "WARNING";
+    return "NORMAL";
+}
+
 export default function Pcpanel({ pc, now }) {
     const [collapsed, setCollapsed] = useState(false);
     const [openStatic, setOpenStatic] = useState(false);
@@ -26,13 +64,8 @@ export default function Pcpanel({ pc, now }) {
 
     const lastUpdate = pc.stats?.timestamp ? new Date(pc.stats.timestamp).toLocaleTimeString() : "N/A";
     const cpuLoad = pc.stats?.cpu?.load;
-    const cpuColor = typeof cpuLoad === "number"
-        ? cpuLoad > 80
-            ? "#dc2626"
-            : cpuLoad > 50
-                ? "#f59e0b"
-                : "#22c55e"
-        : "#94a3b8";
+    const cpuColor = typeof cpuLoad === "number" ?
+        cpuLoad > 80 ? "#dc2626" : cpuLoad > 50 ? "#f59e0b" : "#22c55e" : "#94a3b8";
     const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
 
     return (
@@ -43,6 +76,9 @@ export default function Pcpanel({ pc, now }) {
                     <h3 style={Headerstyle}>
                         <Laptop />{" "}
                         <GoDotFill style={{ color: pc.online ? "green" : "red" }} /> {pc.pcId}
+                        <span className="ml-2 text-xs text-gray-400">
+                            [{calculateSeverity(pc)}]
+                        </span>
                     </h3>
 
                     <button onClick={() => setCollapsed(!collapsed)} style={iconBtn}>

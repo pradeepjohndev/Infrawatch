@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import { Laptop, Link } from "lucide-react";
 import { useNow } from "../Helper/useNow.jsx";
-import { OctagonAlert } from "lucide-react";
-import { Link as RouterLink } from "react-router-dom";
 
 function timeAgo(lastSeen, now) {
   if (!lastSeen) return "unknown";

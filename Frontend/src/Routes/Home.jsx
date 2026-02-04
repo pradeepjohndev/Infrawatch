@@ -1,6 +1,6 @@
 import { CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";
-import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon } from 'lucide-react';
+import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon, CircleAlert, TriangleAlert } from 'lucide-react';
 import RecentPCItem from "../Components/RecentPCItem";
 import { Link } from 'react-router-dom';
 
@@ -62,7 +62,24 @@ export default function Home({ ws, today }) {
                 </div>
             </div>
             <div className="parent h-3/4 w-overflow-hidden m-4">
-                <div className="div1 bg-amber-300"></div>
+                <div className="div1 bg-slate-500/90 rounded-2xl p-6 text-white">
+                    <div className="flex justify-between mb-4">
+                        <h3 className="text-xl font-bold">
+                            Alerts<br></br>
+                            <p className="text-white text-sm">Action required for the following systems</p>
+                        </h3>
+                        <Link to="/alerts">
+                            <button className="text-sm px-4 py-2 rounded-xl bg-white/20 hover:bg-white/10 hover:border ease-in-out text-white duration-300">View all</button>
+                        </Link>
+                    </div>
+                    <div className="space-y-2 max-h-98 overflow-y-auto scrollbar-color-blue-200 pr-1">
+                        <p className="text-white/70 text-sm">No alerts at the moment. All systems are running smoothly!</p>
+                        <div className="flex hover:border duration-300 ease-in-out rounded-2xl p-2 gap-2 bg-red-400/80"><CircleAlert className="w-6 h-6 text-red-700" />PC-124
+                        </div>
+                        <div className="flex hover:border duration-300 ease-in-out rounded-2xl p-2 gap-2 bg-yellow-400/80"><TriangleAlert className="w-6 h-6 text-yellow-700" />PC-1454</div>
+                    </div>
+                </div>
+
                 <div className="div2 bg-linear-to-br from-blue-100 to-blue-400  hover:from-blue-200 hover:to-blue-500 rounded-2xl p-6 duration-300 transition ease-in-out hover:scale-105">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
