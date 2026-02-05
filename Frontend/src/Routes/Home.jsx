@@ -1,14 +1,21 @@
 import { CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";
-import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon, CircleAlert, TriangleAlert } from 'lucide-react';
-import RecentPCItem from "../Components/RecentPCItem";
+import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon, CircleAlert, TriangleAlert, ArrowBigRightDash } from 'lucide-react';
+import RecentPCItem from "../utils/RecentPCItem.jsx";
 import { Link } from 'react-router-dom';
+import { analyzeHealth } from "../utils/healthAnalyzer";
+import { useNavigate } from "react-router-dom";
 
 export default function Home({ ws, today }) {
+    const navigate = useNavigate();
     const [pcs, setPcs] = useState([]);
     const [ready, setReady] = useState(false);
     const recentDevices = pcs.slice(-10).reverse();
+    const isCritical = alert.severity === "CRITICAL";
 
+    const severityStyles = isCritical ? { bg: "bg-red-400/80", icon: <CircleAlert className="w-6 h-6 text-red-700" />, } :
+        { bg: "bg-yellow-400/80", icon: <TriangleAlert className="w-6 h-6 text-yellow-700" />, };
+    const alerts = pcs.map(pc => ({ pcId: pc.pcId, ...analyzeHealth(pc) })).filter(a => a.severity !== "NORMAL");
     const [deviceCounts, setDeviceCounts] = useState({
         total: 0,
         online: 0,
@@ -72,11 +79,31 @@ export default function Home({ ws, today }) {
                             <button className="text-sm px-4 py-2 rounded-xl bg-white/20 hover:bg-white/10 hover:border ease-in-out text-white duration-300">View all</button>
                         </Link>
                     </div>
-                    <div className="space-y-2 max-h-98 overflow-y-auto scrollbar-color-blue-200 pr-1">
-                        <p className="text-white/70 text-sm">No alerts at the moment. All systems are running smoothly!</p>
-                        <div className="flex hover:border duration-300 ease-in-out rounded-2xl p-2 gap-2 bg-red-400/80"><CircleAlert className="w-6 h-6 text-red-700" />PC-124
-                        </div>
-                        <div className="flex hover:border duration-300 ease-in-out rounded-2xl p-2 gap-2 bg-yellow-400/80"><TriangleAlert className="w-6 h-6 text-yellow-700" />PC-1454</div>
+                    <div className="space-y-2 max-h-98 overflow-y-auto pr-1">
+                        {alerts.length === 0 && (
+                            <p className="text-white/70 text-sm">
+                                No alerts at the moment. All systems are running smoothly!
+                            </p>
+                        )}
+
+                        {alerts.map(alert => (
+                            <div key={alert.pcId}
+                                className={`cursor-pointer flex items-center justify-between gap-3 rounded-2xl p-3 transition hover:border hover:border-white/30 
+                            ${severityStyles.bg}`}>
+                                <div className="flex items-center gap-3">
+                                    {severityStyles.icon}
+                                    <div className="flex flex-col">
+                                        <span className="font-medium text-white">{alert.pcId}</span>
+                                        <span className="text-xs text-black/70">{alert.issues.join(", ")}</span>
+                                    </div>
+                                </div>
+
+                                <button onClick={() => navigate(`/dashboard#pc-${alert.pcId}`)}
+                                    className="flex items-center justify-center rounded-xl bg-white/20 px-2 py-1 text-white transition hover:bg-white/30" aria-label={`View ${alert.pcId}`}>
+                                    <ArrowBigRightDash className="w-5 h-5" />
+                                </button>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
