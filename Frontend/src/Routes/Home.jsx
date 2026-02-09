@@ -84,15 +84,13 @@ export default function Home({ ws, today }) {
 
                         {alerts.map(alert => {
                             const isCritical = alert.severity?.trim().toUpperCase() === "CRITICAL";
-                            const severityStyles = isCritical
-                                ? {
-                                    bg: "bg-red-400/70",
-                                    icon: <CircleAlert className="w-6 h-6 text-red-900" />,
-                                }
-                                : {
-                                    bg: "bg-yellow-400/70",
-                                    icon: <TriangleAlert className="w-6 h-6 text-yellow-900" />,
-                                };
+                            const severityStyles = isCritical ? {
+                                bg: "bg-red-400/70",
+                                icon: <CircleAlert className="w-6 h-6 text-red-900" />,
+                            } : {
+                                bg: "bg-yellow-400/70",
+                                icon: <TriangleAlert className="w-6 h-6 text-yellow-900" />,
+                            };
 
                             return (
                                 <div>
