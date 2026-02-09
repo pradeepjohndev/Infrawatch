@@ -38,6 +38,8 @@ export default function App() {
           <Route path="Inspect" element={<Inspect today={today} clock={clock} />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/not_found" element={<Not_Found />} />
+          <Route path="*" element={<Not_Found />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </main>
     </div>

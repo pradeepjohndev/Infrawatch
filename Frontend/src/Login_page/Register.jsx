@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { CircleX,CircleCheck } from "lucide-react";
+import { CircleX, CircleCheck } from "lucide-react";
 axios.defaults.withCredentials = true;
 
 export default function Register() {
@@ -20,7 +20,7 @@ export default function Register() {
       return;
     }
 
-    if (password.length<5){
+    if (password.length < 5) {
       setMsg("Password is weak");
       setIsError(true);
       return;
@@ -34,14 +34,13 @@ export default function Register() {
 
     try {
       await axios.post("http://localhost:5000/register", {
-        username,
-        password,
+        username, password,
       });
 
       setMsg("Registered successfully");
       setIsError(false);
+      setTimeout(() => navigate("/home"), 800);
 
-      setTimeout(() => navigate("/"), 800);
     } catch {
       setMsg("Registration failed");
       setIsError(true);
@@ -49,47 +48,33 @@ export default function Register() {
   };
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gray-900">
+    <div className="flex h-screen items-center justify-center bg-gray-900">
       <div className="w-[320px] rounded-lg bg-gray-700 p-6 text-center shadow-lg">
         <h1 className="mb-6 text-2xl font-semibold text-white">Register</h1>
 
         <input
           className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+          placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
 
         <input type="password"
           className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
         <input type="password"
           className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-          placeholder="Re-enter Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}/>
+          placeholder="Re-enter Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
         <button onClick={register}
           className="w-full rounded bg-green-600 py-2 font-semibold text-white transition hover:bg-green-700">Register</button>
 
         {msg && (
-          <div
-            className={`mt-4 flex items-center gap-2 rounded p-3 text-sm text-white ${
-              isError ? "bg-red-600" : "bg-green-600"
-            }`}
-          >
+          <div className={`mt-4 flex items-center gap-2 rounded p-3 text-sm text-white 
+            ${isError ? "bg-red-600" : "bg-green-600"}`}>
+
             {isError ? <CircleX /> : <CircleCheck />}
             <span>{msg}</span>
           </div>
         )}
-
-        <p className="mt-4 text-sm text-gray-200">Already a user?{" "}
-          <a href="/" className="text-blue-300 hover:underline">Login</a>
-        </p>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 export const THRESHOLDS = {
     cpu: 50,
     ram: 50,
-    storage: 80,
-    network: 70
+    storage: 50,
+    network: 1
 };
 
 export function analyzeHealth(pc) {
@@ -16,18 +16,17 @@ export function analyzeHealth(pc) {
     if (typeof cpu === "number" && cpu >= THRESHOLDS.cpu) { issues.push("CPU"); }
     if (typeof ram === "number" && ram >= THRESHOLDS.ram) { issues.push("RAM"); }
     if (pc.stats?.disks?.length) {
-        let used = 0;
-        let total = 0;
-
-        pc.stats.disks.forEach(d => { used += d.used; total += d.size; });
-        const storage = total ? (used / total) * 100 : null;
-
-        if (typeof storage === "number" && storage >= THRESHOLDS.storage) { issues.push("DISK"); }
+        pc.stats.disks.forEach(d => {
+            const usage = parseFloat(d.usage);
+            if (!isNaN(usage) && usage >= THRESHOLDS.storage) {
+                issues.push("DISK");
+            }
+        });
     }
-
     if (netRate >= THRESHOLDS.network) { issues.push("NET"); }
 
     if (issues.length >= 3) severity = "CRITICAL";
     else if (issues.length === 2) severity = "WARNING";
     return { severity, issues };
+
 }
