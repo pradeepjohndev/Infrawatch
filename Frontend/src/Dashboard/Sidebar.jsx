@@ -12,7 +12,8 @@ const menuItems = [
     { icons: <Settings size={20} />, label: "Setting", path: "/setting" }
 ];
 
-export default function Sidebar({ total }) {
+export default function Sidebar() {
+    let total = 100
     const [open, setOpen] = useState(false);
     return (
         <aside className="h-screen shrink-0">

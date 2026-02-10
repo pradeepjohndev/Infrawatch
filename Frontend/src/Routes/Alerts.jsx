@@ -9,7 +9,6 @@ export default function Alerts({ now = 0 }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [severityFilter, setSeverityFilter] = useState("ALL");
 
-
     useEffect(() => {
         const socket = new WebSocket("ws://localhost:8080");
 
@@ -37,7 +36,8 @@ export default function Alerts({ now = 0 }) {
 
     const warningCount = useMemo(() => alertPcs.filter((item) => item.severity === "WARNING").length, [alertPcs]);
     const criticalCount = useMemo(() => alertPcs.filter((item) => item.severity === "CRITICAL").length, [alertPcs]);
-    let alert_total = warningCount + criticalCount;
+    let alert_total = warningCount + criticalCount + 1;
+    console.log(alert_total);
     <Sidebar total={alert_total} />
 
     const filteredAlertPcs = useMemo(() => {

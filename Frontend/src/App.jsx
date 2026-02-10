@@ -28,7 +28,6 @@ export default function App() {
     return () => clearInterval(t);
   }, []);
 
-  console.log("App rendered with alertCounts:", alertCounts);
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar total={alertCounts.total} />
