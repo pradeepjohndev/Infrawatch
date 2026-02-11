@@ -9,12 +9,12 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ server, path: "/ws" });
 const pcs = new Map();
 const dashboards = new Set();
 
+app.use(cors({ origin: "*" }));
 app.set("trust proxy", true);
-app.use(cors());
 app.use(express.json());
 
 app.get("/", (_, res) => {
