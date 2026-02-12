@@ -19,12 +19,12 @@ export default function Home({ ws, today }) {
     });
 
     useEffect(() => {
-        const socket = new WebSocket("ws://localhost:8080");
+        const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
 
         socket.onopen = () => {
             socket.send(JSON.stringify({
                 type: "DASHBOARD_REGISTER",
-                dashboardId: crypto.randomUUID()
+                dashboardId: Date.now().toString(),
             }));
             setReady(true);
         };
@@ -56,7 +56,7 @@ export default function Home({ ws, today }) {
             {ready && ws && <Device counts={deviceCounts} />}
             <div className="flex justify-between text-white ">
                 <div className="m-5">
-                    <h1>Hello user!</h1>
+                    <h1>Hello there</h1>
                     <span>Track all your system's in one single place.</span>
                 </div>
                 <div className="border rounded-4xl h-10 mt-8 p-8 bg-gray-700 flex items-center">

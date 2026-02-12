@@ -10,12 +10,12 @@ export default function Alerts({ now = 0 }) {
     const [severityFilter, setSeverityFilter] = useState("ALL");
 
     useEffect(() => {
-        const socket = new WebSocket("ws://localhost:8080");
+        const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
 
         socket.onopen = () => {
             socket.send(JSON.stringify({
                 type: "DASHBOARD_REGISTER",
-                dashboardId: crypto.randomUUID(),
+                dashboardId: Date.now().toString(),
             }));
         };
 

@@ -10,13 +10,6 @@ import { HardDrive, Wifi, Activity, Laptop, Cpu, ArrowUpRight, ArrowDownRight, C
 
 const gb = bytes => (bytes / 1024 ** 3).toFixed(2) + " GB";
 
-const THRESHOLDS = {
-    cpu: 70,
-    ram: 50,
-    storage: 50,
-    network: 50
-};
-
 function formatUptime(sec) {
     const d = Math.floor(sec / 86400);
     sec %= 86400;
@@ -36,8 +29,7 @@ export default function Pcpanel({ pc, now }) {
     const { severity, issues } = analyzeHealth(pc);
     const lastUpdate = pc.stats?.timestamp ? new Date(pc.stats.timestamp).toLocaleTimeString() : "N/A";
     const cpuLoad = pc.stats?.cpu?.load;
-    const cpuColor = typeof cpuLoad === "number" ?
-        cpuLoad > 80 ? "#dc2626" : cpuLoad > 50 ? "#f59e0b" : "#22c55e" : "#94a3b8";
+    const cpuColor = typeof cpuLoad === "number" ? cpuLoad > 80 ? "#dc2626" : cpuLoad > 50 ? "#f59e0b" : "#22c55e" : "#94a3b8";
     const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
     const severityClass = severity === "CRITICAL" ? "animate-pulse duration-5000 border-red-500" : severity === "WARNING"
         ? "border-yellow-400" : "border-transparent";

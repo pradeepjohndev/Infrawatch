@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useDashboardSocket(url = "ws://localhost:8080") {
+export function useDashboardSocket(url = `ws://${window.location.host}/ws`) {
   const [ws, setWs] = useState(null);
   const [ready, setReady] = useState(false);
 
@@ -17,7 +17,7 @@ export function useDashboardSocket(url = "ws://localhost:8080") {
     socket.onopen = () => {
       socket.send(JSON.stringify({
         type: "DASHBOARD_REGISTER",
-        dashboardId: crypto.randomUUID()
+        dashboardId: Date.now().toString(),
       }));
 
       setWs(socket);
