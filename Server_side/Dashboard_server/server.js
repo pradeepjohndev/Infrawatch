@@ -141,7 +141,7 @@ function sendDashboardData() {
   });
 }
 
-app.post("/api/agent/register", async (req, res) => {
+/*app.post("/api/agent/register", async (req, res) => {
   const data = req.body;
 
   try {
@@ -186,7 +186,7 @@ app.post("/api/agent/register", async (req, res) => {
   }
 });
 
-app.post("/api/metrics", async (req, res) => {
+ app.post("/api/metrics", async (req, res) => {
   const data = req.body;
 
   try {
@@ -242,8 +242,8 @@ app.post("/api/metrics", async (req, res) => {
     console.error("Metrics error:", err);
     res.status(500).json({ error: "Metrics insert failed" });
   }
-});
+}); */
 
-server.listen(8080, () => {
+server.listen(8080, '0.0.0.0', () => {
   console.log("WebSocket + API server running on port 8080");
 });

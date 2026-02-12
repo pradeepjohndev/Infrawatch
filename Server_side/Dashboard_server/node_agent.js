@@ -6,13 +6,13 @@ import os from "os";
 
 dotenv.config();
 
-const SERVER_URL = process.env.SERVER_URL || "ws://localhost:8080";
+const SERVER_URL = process.env.SERVER_URL || "ws://192.168.4.14:8080/ws";
 console.log("Agent connecting to:", SERVER_URL);
 
-const DB_SERVER_URL = process.env.DB_SERVER_URL || "http://localhost:8080";
-const DB_INTERVAL = process.env.DB_INTERVAL || 10000;
+/* const DB_SERVER_URL = process.env.DB_SERVER_URL || "http://localhost:8080";
+const DB_INTERVAL = process.env.DB_INTERVAL || 10000; */
 
-let dbInterval;
+// let dbInterval;
 let staticSentToDB = false;
 
 let PC_ID = "UNKNOWN-PC";
@@ -32,7 +32,7 @@ async function resolvePcId() {
     PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
   }
 }
-
+/* 
 async function sendStaticInfoToDB() {
   if (staticSentToDB || !staticPayload) return;
 
@@ -88,7 +88,7 @@ async function sendDynamicInfoToDB() {
       data: err.response?.data,
     });
   }
-}
+} */
 
 async function connect() {
   socket = new WebSocket(SERVER_URL);
@@ -106,8 +106,8 @@ async function connect() {
       payload: staticPayload
     }));
 
-    await sendStaticInfoToDB();
-    dbInterval = setInterval(sendDynamicInfoToDB, DB_INTERVAL);
+    // await sendStaticInfoToDB();
+    // dbInterval = setInterval(sendDynamicInfoToDB, DB_INTERVAL);
 
     sendHeartbeat();
     startFastMetrics();
@@ -119,7 +119,7 @@ async function connect() {
 
     clearInterval(metricsInterval);
     clearInterval(heartbeatInterval);
-    clearInterval(dbInterval);
+    // clearInterval(dbInterval);
 
     setTimeout(connect, 3000);
   };
