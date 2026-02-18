@@ -19,6 +19,7 @@ export default function Home({ ws, today }) {
     });
 
     useEffect(() => {
+        //const socket = new WebSocket(`ws://localhost:8080/ws`);
         const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
 
         socket.onopen = () => {

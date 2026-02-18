@@ -12,8 +12,8 @@ const menuItems = [
     { icons: <Settings size={20} />, label: "Setting", path: "/setting" }
 ];
 
-export default function Sidebar() {
-    let total = 100
+export default function Sidebar({ alertTotal }) {
+    console.log(alertTotal);
     const [open, setOpen] = useState(false);
     return (
         <aside className="h-screen shrink-0">
@@ -38,10 +38,10 @@ export default function Sidebar() {
                                         <div className={`relative ${isActive ? "text-black" : "text-white"}`}>
                                             {item.icons}
 
-                                            {isAlertItem && total > 0 && (
+                                            {isAlertItem && alertTotal > 0 && (
                                                 <span
                                                     className="absolute -top-2 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold text-white">
-                                                    {total > 99 ? "99+" : total}
+                                                    {alertTotal > 99 ? "99+" : alertTotal}
                                                 </span>
                                             )}
                                         </div>

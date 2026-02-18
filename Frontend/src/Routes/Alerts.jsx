@@ -4,7 +4,7 @@ import PCPanel from "../Dashboard/Pcpanel";
 import { analyzeHealth } from "../utils/healthAnalyzer";
 import Sidebar from "../Dashboard/Sidebar";
 
-export default function Alerts({ now = 0 }) {
+export default function Alerts({ now = 0, onAlertCountsChange }) {
     const [pcs, setPcs] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [severityFilter, setSeverityFilter] = useState("ALL");
@@ -36,9 +36,14 @@ export default function Alerts({ now = 0 }) {
 
     const warningCount = useMemo(() => alertPcs.filter((item) => item.severity === "WARNING").length, [alertPcs]);
     const criticalCount = useMemo(() => alertPcs.filter((item) => item.severity === "CRITICAL").length, [alertPcs]);
-    let alert_total = warningCount + criticalCount + 1;
-    console.log(alert_total);
-    <Sidebar total={alert_total} />
+    const alert_total = useMemo(
+        () => alertPcs.filter((item) => item.severity === "WARNING" || item.severity === "CRITICAL").length,
+        [alertPcs]
+    );
+
+    useEffect(() => {
+        onAlertCountsChange?.({ total: alert_total });
+    }, [alert_total, onAlertCountsChange]);
 
     const filteredAlertPcs = useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase();

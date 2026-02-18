@@ -47,13 +47,8 @@ export default function Setting() {
                             </Link>
                         </button>
                     </div>
-                    <div className="mt-6 p-4 bg-gray-400/90 rounded-md">
-                        <h3 className="font-bold mb-2">Danger Zone</h3>
-                        <p className="text-sm text-gray-300 mb-4" style={{ color: "var(--text)" }}>This action is irreversible. Please proceed with caution.</p>
-                        <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition" onClick={() => window.alert("All data will be deleted...!")}>Delete All Data</button>
-                    </div>
                 </div>
-            </div >
+            </div>
         </div>
     );
 }

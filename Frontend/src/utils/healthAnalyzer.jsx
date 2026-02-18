@@ -1,8 +1,8 @@
 export const THRESHOLDS = {
-    cpu: 50,
-    ram: 50,
-    storage: 50,
-    network: 1
+    cpu: 70,
+    ram: 80,
+    storage: 90,
+    network: 100 * 1024 * 1024
 };
 
 export function analyzeHealth(pc) {

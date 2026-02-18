@@ -13,7 +13,7 @@ export default function Dashboard({ clock, now }) {
   const [sortOrder, setSortOrder] = useState("ONLINE_FIRST");
 
   useEffect(() => {
-    const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
+    const socket = new WebSocket(`ws://localhost:8080/ws`);
 
     socket.onopen = () => {
       socket.send(JSON.stringify({

@@ -53,15 +53,15 @@ export default function Register() {
         <h1 className="mb-6 text-2xl font-semibold text-white">Register</h1>
 
         <input
-          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-white  text-white"
           placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
 
         <input type="password"
-          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-white  text-white"
           placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
         <input type="password"
-          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-white text-white"
           placeholder="Re-enter Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
         <button onClick={register}

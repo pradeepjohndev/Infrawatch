@@ -30,7 +30,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar total={alertCounts.total} />
+      <Sidebar alertTotal={alertCounts.total} />
       <main className="flex-1 overflow-y-auto">
         <Routes>
           <Route exact path="/home" element={<Home today={today} />} />
@@ -40,11 +40,6 @@ export default function App() {
           <Route exact path="/setting" element={<Setting />} />
           <Route exact path="/not_found" element={<Not_Found />} />
           <Route exact path="/register" element={<Register />} />
-          {/* <Route path="/hi" element={<div><Outlet /></div>}>
-            <Route path="hello" element={<h1 className="text-white">Hello</h1>} />
-            <Route path="bye" element={<h1 className="text-white">bye</h1>} />
-            <Route path="work" element={<h1 className="text-white">work</h1>} />
-          </Route> */}
         </Routes>
       </main>
     </div>

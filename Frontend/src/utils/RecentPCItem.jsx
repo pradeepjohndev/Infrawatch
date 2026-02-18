@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Laptop, Link } from "lucide-react";
+import { Laptop } from "lucide-react";
 import { useNow } from "../Helper/useNow.jsx";
 
 function timeAgo(lastSeen, now) {

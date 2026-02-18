@@ -31,7 +31,7 @@ export default function Pcpanel({ pc, now }) {
     const cpuLoad = pc.stats?.cpu?.load;
     const cpuColor = typeof cpuLoad === "number" ? cpuLoad > 80 ? "#dc2626" : cpuLoad > 50 ? "#f59e0b" : "#22c55e" : "#94a3b8";
     const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
-    const severityClass = severity === "CRITICAL" ? "animate-pulse duration-5000 border-red-500" : severity === "WARNING"
+    const severityClass = severity === "CRITICAL" ? "border-red-500" : severity === "WARNING"
         ? "border-yellow-400" : "border-transparent";
 
     useEffect(() => {
