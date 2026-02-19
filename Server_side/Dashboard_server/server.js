@@ -244,6 +244,6 @@ function sendDashboardData() {
   }
 }); */
 
-server.listen(8080, '0.0.0.0', () => {
+server.listen(8080, "0.0.0.0", () => {
   console.log("WebSocket + API server running on port 8080");
 });

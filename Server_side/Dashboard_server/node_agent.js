@@ -6,7 +6,7 @@ import os from "os";
 
 dotenv.config();
 
-const SERVER_URL = process.env.SERVER_URL || "ws://192.168.4.14:8080/ws";
+const SERVER_URL = process.env.SERVER_URL || "ws://localhost:8080/ws";
 console.log("Agent connecting to:", SERVER_URL);
 
 /* const DB_SERVER_URL = process.env.DB_SERVER_URL || "http://localhost:8080";
@@ -32,6 +32,7 @@ async function resolvePcId() {
     PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
   }
 }
+
 /* 
 async function sendStaticInfoToDB() {
   if (staticSentToDB || !staticPayload) return;
