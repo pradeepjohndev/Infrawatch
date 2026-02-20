@@ -1,8 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Devices from "../Components/Device";
 import PCPanel from "./Pcpanel";
 import { useLocation } from "react-router-dom";
 import { Computer, Server } from "lucide-react"
+import { useDashboardSocket } from "../Helper/useDashboardSocket";
 
 const getPcType = (pc) => {
   const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;
@@ -16,38 +17,12 @@ const getPcType = (pc) => {
 };
 
 export default function Dashboard({ clock, now }) {
-  const [pcs, setPcs] = useState([]);
-  const [ws, setWs] = useState(null);
-  const [ready, setReady] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("ONLINE_FIRST");
   const location = useLocation();
   const [viewMode, setViewMode] = useState(location.state?.viewMode || "ALL");
-
-  useEffect(() => {
-    const socket = new WebSocket(`ws://localhost:8080/ws`);
-    // const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
-
-    socket.onopen = () => {
-      socket.send(JSON.stringify({
-        type: "DASHBOARD_REGISTER",
-        dashboardId: Date.now().toString(),
-      }));
-      setWs(socket);
-      setReady(true);
-    };
-
-    socket.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      if (data.type === "DASHBOARD_UPDATE") {
-        setPcs(data.payload);
-      }
-    };
-
-    socket.onerror = () => console.error("WebSocket error");
-    return () => socket.close();
-  }, []);
+  const { pcs, ws, ready } = useDashboardSocket();
 
   const filteredAndSortedPcs = useMemo(() => {
     let result = pcs.filter((pc) => {
@@ -56,12 +31,7 @@ export default function Dashboard({ clock, now }) {
 
       const matchesStatus = statusFilter === "ALL" ? true : statusFilter === "ONLINE" ? pc.online === true : pc.online === false;
       const pcType = getPcType(pc);
-      const matchesServer =
-        viewMode === "ALL"
-          ? true
-          : viewMode === "SERVER"
-            ? pcType === "server"
-            : pcType === "system";
+      const matchesServer = viewMode === "ALL" ? true : viewMode === "SERVER" ? pcType === "server" : pcType === "system";
       return matchesSearch && matchesStatus && matchesServer;
     });
 

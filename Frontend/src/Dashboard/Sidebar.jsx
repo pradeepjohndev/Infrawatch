@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import logo from '../assets/react.svg';
 import { HousePlug, Menu, AlignHorizontalDistributeCenter, TriangleAlert, Settings, CircleUser, LogOut, ScanSearch } from 'lucide-react';
-import { NavLink } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from "react-router-dom";
 
 const menuItems = [
     { icons: <HousePlug size={20} />, label: "Home", path: "/home" },

@@ -1,57 +1,15 @@
-import { useEffect, useState } from "react";
 import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon, CircleAlert, TriangleAlert, ArrowBigRightDash, Server, LaptopMinimalCheck, CalendarDays } from 'lucide-react';
 import RecentPCItem from "../utils/RecentPCItem.jsx";
 import { Link, useNavigate } from 'react-router-dom';
 import { analyzeHealth } from "../utils/healthAnalyzer";
+import { useDashboardSocket } from "../Helper/useDashboardSocket.jsx";
 
 export default function Home({ ws, today }) {
     const navigate = useNavigate();
-    const [pcs, setPcs] = useState([]);
-    const [ready, setReady] = useState(false);
+    const { pcs, deviceCounts, ready } = useDashboardSocket();
     const recentDevices = pcs.slice(-10).reverse();
-
     const alerts = pcs.map(pc => ({ pcId: pc.pcId, ...analyzeHealth(pc) })).filter(a => a.severity !== "NORMAL");
-    const [deviceCounts, setDeviceCounts] = useState({
-        total: 0,
-        online: 0,
-        offline: 0,
-        server: 0,
-    });
-
-    useEffect(() => {
-        const socket = new WebSocket(`ws://localhost:8080/ws`);
-        //const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
-
-        socket.onopen = () => {
-            socket.send(JSON.stringify({
-                type: "DASHBOARD_REGISTER",
-                dashboardId: Date.now().toString(),
-            }));
-            setReady(true);
-        };
-
-        socket.onmessage = (e) => {
-            const data = JSON.parse(e.data);
-
-            if (data.type === "COUNTS_UPDATE") {
-                setDeviceCounts({
-                    total: data.payload.totalDevices ?? 0,
-                    online: data.payload.onlineDevices ?? 0,
-                    offline: data.payload.offlineDevices ?? 0,
-                    server: data.payload.serverDevices ?? 0,
-                });
-            }
-
-            if (data.type === "DASHBOARD_UPDATE") {
-                setPcs(data.payload);
-            }
-        };
-
-        socket.onerror = () => console.error("WebSocket error");
-
-        return () => socket.close();
-    }, []);
-
+    //const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
 
     return (
         <>
@@ -95,29 +53,27 @@ export default function Home({ ws, today }) {
                             };
 
                             return (
-                                <div>
-                                    <div key={alert.pcId}
-                                        className={`cursor-pointer flex items-center justify-between gap-3 mb-2 rounded-2xl p-3 transition hover:border-black/30 ${severityStyles.bg}`}>
-                                        <div className="flex items-center gap-3">
-                                            {severityStyles.icon}
-                                            <div className="flex flex-row items-baseline gap-2 ">
-                                                <span className="font-medium text-white">{alert.pcId}</span>
-                                                <span className="text-xs text-black/70">{alert.issues.join(", ")}</span>
-                                            </div>
+                                <div key={alert.pcId}
+                                    className={`cursor-pointer flex items-center justify-between gap-3 mb-2 rounded-2xl p-3 transition hover:border-black/30 ${severityStyles.bg}`}>
+                                    <div className="flex items-center gap-3">
+                                        {severityStyles.icon}
+                                        <div className="flex flex-row items-baseline gap-2 ">
+                                            <span className="font-medium text-white">{alert.pcId}</span>
+                                            <span className="text-xs text-black/70">{alert.issues.join(", ")}</span>
                                         </div>
-
-                                        <button onClick={() => navigate(`/dashboard#pc-${alert.pcId}`)}
-                                            className="flex items-center justify-center rounded-xl bg-white/20 px-6 py-2 text-white transition hover:bg-white/30 hover:border duration-200 ease-in-out" aria-label={`View ${alert.pcId}`}>
-                                            <ArrowBigRightDash className="w-5 h-5" />
-                                        </button>
                                     </div>
+
+                                    <button onClick={() => navigate(`/alerts#pc-${alert.pcId}`)}
+                                        className="flex items-center justify-center rounded-xl bg-white/20 px-6 py-2 text-white transition hover:bg-white/30 hover:border duration-200 ease-in-out" aria-label={`View ${alert.pcId}`}>
+                                        <ArrowBigRightDash className="w-5 h-5" />
+                                    </button>
                                 </div>
                             );
                         })}
                     </div>
                 </div>
 
-                <div className="div2 bg-linear-to-br from-blue-100 to-blue-400  hover:from-blue-200 hover:to-blue-500 rounded-2xl p-6 duration-300 transition ease-in-out hover:scale-105">
+                <div className="div2 bg-linear-to-br from-blue-100 to-blue-400  hover:from-blue-200 hover:to-blue-500 rounded-2xl p-6 duration-300 transition ease-in-out hover:scale-105 hover:cursor-pointer" onClick={() => navigate("/dashboard")}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-blue-400 rounded-xl">
@@ -129,7 +85,7 @@ export default function Home({ ws, today }) {
                     </div>
                 </div>
 
-                <div className="div3 bg-linear-to-br from-green-100 to-green-400  hover:from-green-200 hover:to-green-500 rounded-2xl p-6 duration-300 transition ease-in-out hover:scale-105">
+                <div className="div3 bg-linear-to-br from-green-100 to-green-400  hover:from-green-200 hover:to-green-500 rounded-2xl p-6 duration-300 transition ease-in-out hover:scale-105 hover:cursor-pointer" onClick={() => navigate("/dashboard")}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-green-400 rounded-xl">
@@ -141,7 +97,7 @@ export default function Home({ ws, today }) {
                     </div>
                 </div>
 
-                <div className="div4 bg-linear-to-br from-red-100 to-red-400 rounded-2xl p-6 hover:from-red-200 hover:to-red-500 duration-300 transition ease-in-out hover:scale-105">
+                <div className="div4 bg-linear-to-br from-red-100 to-red-400 rounded-2xl p-6 hover:from-red-200 hover:to-red-500 duration-300 transition ease-in-out hover:scale-105 hover:cursor-pointer" onClick={() => navigate("/dashboard")}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-red-400 rounded-xl">
@@ -169,25 +125,25 @@ export default function Home({ ws, today }) {
                         {recentDevices.map((pc) => (<RecentPCItem key={pc.pcId} pc={pc} />))}
                     </div>
                 </div>
-                <div class="div6 bg-linear-to-br from-orange-100 to-orange-400 rounded-2xl p-6 text-white hover:from-orange-200 hover:to-orange-500 hover:cursor-pointer border duration-300 transition ease-in-out hover:scale-105" onClick={() => navigate("/dashboard", { state: { viewMode: "SERVER" } })}>
+                <div className="div6 bg-linear-to-br from-orange-100 to-orange-400 rounded-2xl p-6 text-white hover:from-orange-200 hover:to-orange-500 hover:cursor-pointer border duration-300 transition ease-in-out hover:scale-105" onClick={() => navigate("/dashboard", { state: { viewMode: "SERVER" } })}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-orange-400 rounded-xl">
                                 <Server className="w-8 h-8 text-orange-700" />
                             </div>
-                            <h3 className="text-xl font-semibold text-orange-700">Server connected</h3>
+                            <h3 className="text-xl font-semibold text-orange-700">Server's connected</h3>
                         </div>
                         <span className="text-5xl font-bold text-orange-900">{deviceCounts.server < 10 ? `0${deviceCounts.server}` : deviceCounts.server}</span>
                     </div>
                 </div>
 
-                <div class="div7 bg-linear-to-br from-yellow-100 to-amber-400 rounded-2xl p-6 text-white hover:from-amber-200 hover:to-amber-500 hover:cursor-pointer border duration-300 transition ease-in-out hover:scale-105" onClick={() => navigate("/dashboard", { state: { viewMode: "SYSTEM" } })}>
+                <div className="div7 bg-linear-to-br from-yellow-100 to-amber-400 rounded-2xl p-6 text-white hover:from-amber-200 hover:to-amber-500 hover:cursor-pointer border duration-300 transition ease-in-out hover:scale-105" onClick={() => navigate("/dashboard", { state: { viewMode: "SYSTEM" } })}>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="p-3 bg-yellow-400 rounded-xl">
                                 <LaptopMinimalCheck className="w-8 h-8 text-yellow-700" />
                             </div>
-                            <h3 className="text-xl font-semibold text-yellow-700">System Devices</h3>
+                            <h3 className="text-xl font-semibold text-yellow-700">System's Devices</h3>
                         </div>
                         <span className="text-5xl font-bold text-yellow-900">
                             {(() => {

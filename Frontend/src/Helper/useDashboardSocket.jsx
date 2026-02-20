@@ -5,10 +5,11 @@ export function useDashboardSocket(url = `ws://localhost:8080/ws`) {
   const [ready, setReady] = useState(false);
 
   const [pcs, setPcs] = useState([]);
-  const [counts, setCounts] = useState({
+  const [deviceCounts, setCounts] = useState({
     total: 0,
     online: 0,
     offline: 0,
+    server: 0,
   });
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export function useDashboardSocket(url = `ws://localhost:8080/ws`) {
           total: data.payload.totalDevices ?? 0,
           online: data.payload.onlineDevices ?? 0,
           offline: data.payload.offlineDevices ?? 0,
+          server: data.payload.serverDevices ?? 0,
         });
       }
     };
@@ -49,6 +51,6 @@ export function useDashboardSocket(url = `ws://localhost:8080/ws`) {
     ws,
     ready,
     pcs,
-    counts,
+    deviceCounts,
   };
 }

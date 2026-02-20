@@ -27,6 +27,7 @@ export default function Pcpanel({ pc, now }) {
     const [openStatic, setOpenStatic] = useState(false);
     const [openLive, setOpenLive] = useState(false);
     const { severity, issues } = analyzeHealth(pc);
+
     const lastUpdate = pc.stats?.timestamp ? new Date(pc.stats.timestamp).toLocaleTimeString() : "N/A";
     const cpuLoad = pc.stats?.cpu?.load;
     const cpuColor = typeof cpuLoad === "number" ? cpuLoad > 80 ? "#dc2626" : cpuLoad > 50 ? "#f59e0b" : "#22c55e" : "#94a3b8";
