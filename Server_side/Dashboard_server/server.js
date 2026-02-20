@@ -13,6 +13,17 @@ const wss = new WebSocketServer({ server, path: "/ws" });
 const pcs = new Map();
 const dashboards = new Set();
 
+function getPcType(pc) {
+  const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;
+  if (typeof rawType === "string") {
+    const normalized = rawType.trim().toLowerCase();
+    if (normalized === "server" || normalized === "system") return normalized;
+  }
+
+  const os = pc?.staticInfo?.os?.distro ?? "";
+  return os.toLowerCase().includes("server") ? "server" : "system";
+}
+
 app.use(cors({ origin: "*" }));
 app.set("trust proxy", true);
 app.use(express.json());
@@ -113,6 +124,7 @@ function sendCounts() {
   const totalDevices = pcs.size;
   const onlineDevices = [...pcs.values()].filter(p => p.online).length;
   const offlineDevices = totalDevices - onlineDevices;
+  const serverDevices = [...pcs.values()].filter(p => getPcType(p) === "server").length;
 
   const msg = JSON.stringify({
     type: "COUNTS_UPDATE",
@@ -120,6 +132,7 @@ function sendCounts() {
       totalDevices,
       onlineDevices,
       offlineDevices,
+      serverDevices,
     }
   });
 
