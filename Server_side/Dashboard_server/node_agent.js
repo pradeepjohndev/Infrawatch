@@ -13,7 +13,7 @@ console.log("Agent connecting to:", SERVER_URL);
 const DB_INTERVAL = process.env.DB_INTERVAL || 10000; */
 
 // let dbInterval;
-let staticSentToDB = false;
+// let staticSentToDB = false;
 
 let PC_ID = "UNKNOWN-PC";
 let socket;
