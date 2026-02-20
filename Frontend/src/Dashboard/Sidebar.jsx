@@ -13,7 +13,6 @@ const menuItems = [
 ];
 
 export default function Sidebar({ alertTotal }) {
-    console.log(alertTotal);
     const [open, setOpen] = useState(false);
     return (
         <aside className="h-screen shrink-0">

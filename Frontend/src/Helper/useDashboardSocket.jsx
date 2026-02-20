@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-
-export function useDashboardSocket(url = `ws://${window.location.host}/ws`) {
+//ws://${window.location.host}/ws
+export function useDashboardSocket(url = `ws://localhost:8080/ws`) {
   const [ws, setWs] = useState(null);
   const [ready, setReady] = useState(false);
 

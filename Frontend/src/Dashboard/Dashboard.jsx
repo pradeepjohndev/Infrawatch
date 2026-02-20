@@ -1,8 +1,19 @@
 import { useEffect, useState, useMemo } from "react";
 import Devices from "../Components/Device";
 import PCPanel from "./Pcpanel";
-import { Link } from "react-router-dom";
-import { OctagonAlert } from "lucide-react"
+import { useLocation } from "react-router-dom";
+import { Computer, Server } from "lucide-react"
+
+const getPcType = (pc) => {
+  const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;
+  if (typeof rawType === "string") {
+    const normalized = rawType.trim().toLowerCase();
+    if (normalized === "server" || normalized === "system") return normalized;
+  }
+
+  const os = pc?.staticInfo?.os?.distro ?? "";
+  return os.toLowerCase().includes("server") ? "server" : "system";
+};
 
 export default function Dashboard({ clock, now }) {
   const [pcs, setPcs] = useState([]);
@@ -11,9 +22,12 @@ export default function Dashboard({ clock, now }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("ONLINE_FIRST");
+  const location = useLocation();
+  const [viewMode, setViewMode] = useState(location.state?.viewMode || "ALL");
 
   useEffect(() => {
     const socket = new WebSocket(`ws://localhost:8080/ws`);
+    // const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
 
     socket.onopen = () => {
       socket.send(JSON.stringify({
@@ -38,11 +52,17 @@ export default function Dashboard({ clock, now }) {
   const filteredAndSortedPcs = useMemo(() => {
     let result = pcs.filter((pc) => {
       const matchesSearch = pc.pcId
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        .toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus = statusFilter === "ALL" ? true : statusFilter === "ONLINE" ? pc.online === true : pc.online === false;
-      return matchesSearch && matchesStatus;
+      const pcType = getPcType(pc);
+      const matchesServer =
+        viewMode === "ALL"
+          ? true
+          : viewMode === "SERVER"
+            ? pcType === "server"
+            : pcType === "system";
+      return matchesSearch && matchesStatus && matchesServer;
     });
 
     result.sort((a, b) => {
@@ -54,7 +74,7 @@ export default function Dashboard({ clock, now }) {
     });
 
     return result;
-  }, [pcs, searchTerm, statusFilter, sortOrder]);
+  }, [pcs, searchTerm, statusFilter, sortOrder, viewMode]);
 
   return (
     <div>
@@ -84,9 +104,20 @@ export default function Dashboard({ clock, now }) {
             <option value="OFFLINE_FIRST">Offline first</option>
           </select>
 
-          <Link to="/Alerts">
-            <button className="text-sm p-2 bg-yellow-200 hover:bg-yellow/90 ease-in-out text-black duration-300 flex items-center gap-2 rounded hover:cursor-pointer"><OctagonAlert />Alerts</button>
-          </Link>
+          <button onClick={() => setViewMode("ALL")} className={`p-2 rounded border flex gap-1 hover:cursor-pointer 
+            ${viewMode === "ALL" ? "bg-blue-500 text-white border-blue-500" : "bg-gray-50 hover:bg-gray-200"}`}>
+            <Computer />All System
+          </button>
+
+          <button onClick={() => setViewMode("SERVER")} className={`p-2 rounded border flex gap-1 hover:cursor-pointer
+            ${viewMode === "SERVER" ? "bg-blue-500 text-white border-blue-500" : "bg-gray-50 hover:bg-gray-200"}`}>
+            <Server />Server
+          </button>
+
+          <button onClick={() => setViewMode("SYSTEM")} className={`p-2 rounded border flex gap-1 hover:cursor-pointer
+              ${viewMode === "SYSTEM" ? "bg-blue-500 text-white border-blue-500" : "bg-gray-50 hover:bg-gray-200"}`}>
+            <Computer />System
+          </button>
         </div>
 
         <div className="status pl-5 text-white">

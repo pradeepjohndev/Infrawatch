@@ -10,7 +10,8 @@ export default function Alerts({ now = 0, onAlertCountsChange }) {
     const [severityFilter, setSeverityFilter] = useState("ALL");
 
     useEffect(() => {
-        const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
+        const socket = new WebSocket(`ws://localhost:8080/ws`);
+        //const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
 
         socket.onopen = () => {
             socket.send(JSON.stringify({

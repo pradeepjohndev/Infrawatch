@@ -1,6 +1,5 @@
-import { CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";
-import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon, CircleAlert, TriangleAlert, ArrowBigRightDash } from 'lucide-react';
+import { UsersRoundIcon, UserRoundCheckIcon, UserRoundXIcon, CircleAlert, TriangleAlert, ArrowBigRightDash, Server, LaptopMinimalCheck, CalendarDays } from 'lucide-react';
 import RecentPCItem from "../utils/RecentPCItem.jsx";
 import { Link, useNavigate } from 'react-router-dom';
 import { analyzeHealth } from "../utils/healthAnalyzer";
@@ -16,11 +15,12 @@ export default function Home({ ws, today }) {
         total: 0,
         online: 0,
         offline: 0,
+        server: 0,
     });
 
     useEffect(() => {
-        //const socket = new WebSocket(`ws://localhost:8080/ws`);
-        const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
+        const socket = new WebSocket(`ws://localhost:8080/ws`);
+        //const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
 
         socket.onopen = () => {
             socket.send(JSON.stringify({
@@ -38,6 +38,7 @@ export default function Home({ ws, today }) {
                     total: data.payload.totalDevices ?? 0,
                     online: data.payload.onlineDevices ?? 0,
                     offline: data.payload.offlineDevices ?? 0,
+                    server: data.payload.serverDevices ?? 0,
                 });
             }
 
@@ -96,8 +97,7 @@ export default function Home({ ws, today }) {
                             return (
                                 <div>
                                     <div key={alert.pcId}
-                                        className={`cursor-pointer flex items-center justify-between gap-3 mb-2 rounded-2xl p-3 transition hover:border-black/30 
-                            ${severityStyles.bg}`}>
+                                        className={`cursor-pointer flex items-center justify-between gap-3 mb-2 rounded-2xl p-3 transition hover:border-black/30 ${severityStyles.bg}`}>
                                         <div className="flex items-center gap-3">
                                             {severityStyles.icon}
                                             <div className="flex flex-row items-baseline gap-2 ">
@@ -111,7 +111,6 @@ export default function Home({ ws, today }) {
                                             <ArrowBigRightDash className="w-5 h-5" />
                                         </button>
                                     </div>
-
                                 </div>
                             );
                         })}
@@ -126,7 +125,7 @@ export default function Home({ ws, today }) {
                             </div>
                             <h3 className="text-xl font-semibold text-blue-700">Total<br></br>Devices</h3>
                         </div>
-                        <span className="text-5xl font-bold text-blue-900">{deviceCounts.total < 10 ? `0${deviceCounts.total}` : deviceCounts}</span>
+                        <span className="text-5xl font-bold text-blue-900">{deviceCounts.total < 10 ? `0${deviceCounts.total}` : deviceCounts.total}</span>
                     </div>
                 </div>
 
@@ -170,8 +169,36 @@ export default function Home({ ws, today }) {
                         {recentDevices.map((pc) => (<RecentPCItem key={pc.pcId} pc={pc} />))}
                     </div>
                 </div>
-            </div>
+                <div class="div6 bg-linear-to-br from-orange-100 to-orange-400 rounded-2xl p-6 text-white hover:from-orange-200 hover:to-orange-500 hover:cursor-pointer border duration-300 transition ease-in-out hover:scale-105" onClick={() => navigate("/dashboard", { state: { viewMode: "SERVER" } })}>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-orange-400 rounded-xl">
+                                <Server className="w-8 h-8 text-orange-700" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-orange-700">Server connected</h3>
+                        </div>
+                        <span className="text-5xl font-bold text-orange-900">{deviceCounts.server < 10 ? `0${deviceCounts.server}` : deviceCounts.server}</span>
+                    </div>
+                </div>
 
+                <div class="div7 bg-linear-to-br from-yellow-100 to-amber-400 rounded-2xl p-6 text-white hover:from-amber-200 hover:to-amber-500 hover:cursor-pointer border duration-300 transition ease-in-out hover:scale-105" onClick={() => navigate("/dashboard", { state: { viewMode: "SYSTEM" } })}>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="p-3 bg-yellow-400 rounded-xl">
+                                <LaptopMinimalCheck className="w-8 h-8 text-yellow-700" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-yellow-700">System Devices</h3>
+                        </div>
+                        <span className="text-5xl font-bold text-yellow-900">
+                            {(() => {
+                                const devicesystem = deviceCounts.total - deviceCounts.server;
+                                return devicesystem < 10 ? `0${devicesystem}` : devicesystem;
+                            })()
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
         </>
     )
 }

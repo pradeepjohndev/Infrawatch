@@ -6,7 +6,7 @@ import Cpuload from "../Components/Cpuload";
 import RAMStackedBar from "../Components/RAMStackedBar";
 import { analyzeHealth } from "../utils/healthAnalyzer";
 import { GoDotFill } from "react-icons/go";
-import { HardDrive, Wifi, Activity, Laptop, Cpu, ArrowUpRight, ArrowDownRight, CircleArrowRight, CircleArrowDown } from 'lucide-react';
+import { HardDrive, Wifi, Activity, Laptop, Cpu, ArrowUpRight, ArrowDownRight, CircleArrowRight, CircleArrowDown, Server } from 'lucide-react';
 
 const gb = bytes => (bytes / 1024 ** 3).toFixed(2) + " GB";
 
@@ -31,8 +31,11 @@ export default function Pcpanel({ pc, now }) {
     const cpuLoad = pc.stats?.cpu?.load;
     const cpuColor = typeof cpuLoad === "number" ? cpuLoad > 80 ? "#dc2626" : cpuLoad > 50 ? "#f59e0b" : "#22c55e" : "#94a3b8";
     const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
-    const severityClass = severity === "CRITICAL" ? "border-red-500" : severity === "WARNING"
-        ? "border-yellow-400" : "border-transparent";
+    const severityClass = severity === "CRITICAL" ? "border-red-500" : severity === "WARNING" ? "border-yellow-400" : "border-transparent";
+    const os = pc.staticInfo?.os?.distro ?? "N/A";
+    const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;
+    const normalizedType = typeof rawType === "string" ? rawType.trim().toLowerCase() : "";
+    const isServer = normalizedType ? normalizedType === "server" : os.toLowerCase().includes("server");
 
     useEffect(() => {
         const isTarget = window.location.hash === `#pc-${pc.pcId}`;
@@ -49,12 +52,14 @@ export default function Pcpanel({ pc, now }) {
             <div id={`pc-${pc.pcId}`} className={`pc ${pc.online ? "online" : "offline"} transition-all duration-500 border-2 ${severityClass}`}>
                 <div style={row}>
                     <h3 style={Headerstyle}>
-                        <Laptop />{" "}
-                        <GoDotFill style={{ color: pc.online ? "green" : "red" }} /> {pc.pcId}
-                        <span className="ml-2 text-xs font-medium" style={{
-                            color: severity === "CRITICAL" ? "#dc2626"
-                                : severity === "WARNING" ? "#f59e0b" : "#22c55e"
-                        }}>
+                        {isServer ? <Server /> : <Laptop />}
+                        < GoDotFill style={{ color: pc.online ? "green" : "red" }} />
+                        <div className="flex flex-col">
+                            <div>{pc.pcId}</div>
+                            <div>{isServer ? <span className="text-red-500 align-text-top text-xs">Server</span> : ""}</div>
+                        </div>
+                        <span className="ml-2 text-xs font-medium"
+                            style={{ color: severity === "CRITICAL" ? "#dc2626" : severity === "WARNING" ? "#f59e0b" : "#22c55e" }}>
                             [{severity}]
                         </span>
 
@@ -62,7 +67,6 @@ export default function Pcpanel({ pc, now }) {
                             <span className="ml-2 text-xs text-red-400">({issues.join(", ")})</span>
                         )}
                     </h3>
-
                     <button onClick={() => setCollapsed(!collapsed)} style={iconBtn}>
                         {collapsed ? <CircleArrowRight /> : <CircleArrowDown />}
                     </button>
@@ -85,7 +89,7 @@ export default function Pcpanel({ pc, now }) {
                             <p><b>Manufacturer:</b> {pc.staticInfo?.system?.manufacturer ?? "N/A"}</p>
                             <p><b>Model:</b> {pc.staticInfo?.system?.model ?? "N/A"}</p>
                             <p><b>CPU:</b> {pc.staticInfo?.cpu?.brand ?? "N/A"}</p>
-                            <p><b>OS:</b> {pc.staticInfo?.os?.distro ?? "N/A"}</p>
+                            <p><b>OS:</b> {os} </p>
                         </Collapse>
                     </div>
 

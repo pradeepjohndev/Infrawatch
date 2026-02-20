@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Laptop } from "lucide-react";
+import { Laptop, Server } from "lucide-react";
 import { useNow } from "../Helper/useNow.jsx";
 
 function timeAgo(lastSeen, now) {
@@ -24,6 +24,11 @@ function timeAgo(lastSeen, now) {
 const RecentPCItem = ({ pc }) => {
   const now = useNow(10000);
 
+  const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;
+  const normalizedType = typeof rawType === "string" ? rawType.trim().toLowerCase() : "";
+  const os = pc?.staticInfo?.os?.distro ?? "";
+  const isServer = normalizedType ? normalizedType === "server" : os.toLowerCase().includes("server");
+
   const lastSeenText = useMemo(
     () => timeAgo(pc.lastSeen, now),
     [pc.lastSeen, now]
@@ -32,7 +37,7 @@ const RecentPCItem = ({ pc }) => {
   return (
     <div className="flex items-center justify-between bg-white/10 hover:bg-white/20 transition-colors rounded-xl px-4 py-3">
       <div className="flex items-center gap-3">
-        <Laptop className="w-5 h-5 text-white/80" />
+        {isServer ? <Server className="w-5 h-5 text-white/80" /> : <Laptop className="w-5 h-5 text-white/80" />}
         <span className="font-medium text-white">
           {pc.hostname || pc.pcId}
         </span>
