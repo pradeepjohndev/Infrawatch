@@ -3,9 +3,9 @@ import http from "http";
 import WebSocket, { WebSocketServer } from "ws";
 import cors from "cors";
 import dotenv from "dotenv";
-import { poolPromise, sql } from "../DB_server/DB_conn/Database_connection.js";
+import { poolPromise, sql } from "../config/Database_connection.js";
 
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 const app = express();
 const server = http.createServer(app);

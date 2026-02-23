@@ -4,9 +4,9 @@ import si from "systeminformation";
 import axios from "axios";
 import os from "os";
 
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
-const SERVER_URL = process.env.SERVER_URL || "ws://localhost:8080/ws";
+const SERVER_URL = process.env.SERVER_URL;
 console.log("Agent connecting to:", SERVER_URL);
 
 /* const DB_SERVER_URL = process.env.DB_SERVER_URL || "http://localhost:8080";
@@ -26,7 +26,7 @@ const percent = v => v.toFixed(1) + " %";
 
 async function resolvePcId() {
   try {
-    PC_ID = `${os.hostname()} - ${os.userInfo().username}`;
+    PC_ID = `${os.hostname()} - ${os.userInfo().username}` || `PC-${Math.floor(Math.random() * 10000)}`;
   } catch {
     PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
   }
