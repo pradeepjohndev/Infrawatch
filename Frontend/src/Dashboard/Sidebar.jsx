@@ -59,14 +59,13 @@ export default function Sidebar({ alertTotal }) {
                     })}
                 </ul>
 
-                <div className="flex items-center gap-2 p-2 hover:bg-blue-500 rounded-4xl duration-500 border border-white"
-                    onClick={() => setOpen(!open)}>
-                    <div>
+                <div className="flex items-center gap-14 p-2 hover:bg-blue-500 rounded-4xl duration-500 border border-white" onClick={() => setOpen(!open)}>
+                    <div className="flex flex-row gap-2 items-center">
                         <CircleUser size={30} />
+                        <p className={`leading-4 ${!open && "w-0 translate-x-20"} duration-500 overflow-hidden text-xs text-nowrap`}>user</p>
                     </div>
 
-                    <div className={`leading-5 ${!open && "w-0 translate-x-24"} duration-500 overflow-hidden flex items-center gap-22`}>
-                        <p>user1</p>
+                    <div className={`${!open && "w-0 translate-x-10"} duration-500 overflow-hidden flex items-center`}>
                         <Link to="/not_found">
                             <button className="text-sm text-gray-300 rounded-4xl bg-blue-500 hover:bg-blue-700 hover:border duration-500 p-1.5">
                                 <LogOut className="hover:text-red-500" />
@@ -75,7 +74,7 @@ export default function Sidebar({ alertTotal }) {
                     </div>
                 </div>
             </nav>
-        </aside>
+        </aside >
 
     )
 }

@@ -9,8 +9,6 @@ export default function Alerts({ now = 0, onAlertCountsChange }) {
     const [severityFilter, setSeverityFilter] = useState("ALL");
     const { pcs } = useDashboardSocket();
 
-    //const socket = new WebSocket(`${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`);
-
     const alertPcs = useMemo(() => {
         return pcs.map((pc) => ({ pc, ...analyzeHealth(pc) })).filter((item) => item.severity === "CRITICAL" || item.severity === "WARNING");
     }, [pcs]);

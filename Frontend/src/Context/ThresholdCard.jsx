@@ -29,9 +29,7 @@ export default function ThresholdCard() {
         <Slider label="Storage Usage" value={storage} setValue={setStorage} color="accent-green-500" />
       </div>
 
-      <button className="mt-6 w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition font-semibold">
-        Apply Changes
-      </button>
+      <button className="mt-6 w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition font-semibold">Apply Changes</button>
     </div>
   );
 }

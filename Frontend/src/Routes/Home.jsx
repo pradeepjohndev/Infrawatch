@@ -24,7 +24,7 @@ export default function Home({ ws, today }) {
                     <span className="inline-block text-white ml-2">{today}</span>
                 </div>
             </div>
-            <div className="parent h-3/4 w-overflow-hidden m-4">
+            <div className="parent h-3/4 m-4">
                 <div className="div1 bg-slate-500/90 rounded-2xl p-6 text-white">
                     <div className="flex justify-between mb-4">
                         <h3 className="text-xl font-bold">
