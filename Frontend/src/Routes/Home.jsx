@@ -3,6 +3,7 @@ import RecentPCItem from "../utils/RecentPCItem.jsx";
 import { Link, useNavigate } from 'react-router-dom';
 import { analyzeHealth } from "../utils/healthAnalyzer";
 import { useDashboardSocket } from "../Helper/useDashboardSocket.jsx";
+import Username from '../Context/Username.jsx';
 
 export default function Home({ ws, today }) {
     const navigate = useNavigate();
@@ -16,7 +17,7 @@ export default function Home({ ws, today }) {
             {ready && ws && <Device counts={deviceCounts} />}
             <div className="flex justify-between text-white ">
                 <div className="m-5">
-                    <h1>Hello there</h1>
+                    <h1>Hello <Username /></h1>
                     <span>Track all your system's in one single place.</span>
                 </div>
                 <div className="border rounded-4xl h-10 mt-8 p-8 bg-gray-700 flex items-center">
@@ -24,7 +25,7 @@ export default function Home({ ws, today }) {
                     <span className="inline-block text-white ml-2">{today}</span>
                 </div>
             </div>
-            <div className="parent h-3/4 m-4">
+            <div className="parent h-3/4 m-4 flex overflow-w-auto ">
                 <div className="div1 bg-slate-500/90 rounded-2xl p-6 text-white">
                     <div className="flex justify-between mb-4">
                         <h3 className="text-xl font-bold">

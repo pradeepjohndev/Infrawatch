@@ -33,13 +33,13 @@ export default function Register() {
     }
 
     try {
-      await axios.post("http://localhost:5000/register", {
+      await axios.post("http://localhost:8080/register", {
         username, password,
       });
 
       setMsg("Registered successfully");
       setIsError(false);
-      setTimeout(() => navigate("/home"), 800);
+      setTimeout(() => navigate("/home"), 1000);
 
     } catch {
       setMsg("Registration failed");

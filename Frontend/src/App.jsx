@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Login_page/Login";
 import Register from "./Login_page/Register";
 import Home from "./Routes/home.jsx";
@@ -6,16 +6,22 @@ import Inspect from "./Routes/Inspect.jsx";
 import Dashboard from "./Dashboard/Dashboard.jsx";
 import Alerts from "./Routes/Alerts.jsx";
 import Setting from "./Routes/Setting.jsx";
+import Not_Found from "./Components/not_found.jsx";
+import ProtectedRoute from "./Login_page/ProtectedRoute.jsx";
+import ProtectedLayout from "./Login_page/ProtectedLayout.jsx";
 import "./App.css";
 import "./Style.css";
-import Sidebar from "./Dashboard/Sidebar";
-import Not_Found from "./Components/not_found.jsx";
 import { useEffect, useState } from "react";
 
 export default function App() {
   const date = new Date();
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
   const today = `${date.getDate()} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
+
   const [now, setNow] = useState(() => Date.now());
   const [clock, setTime] = useState("");
   const [alertCounts, setAlertCounts] = useState({ total: 0 });
@@ -29,36 +35,29 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar alertTotal={alertCounts.total} />
-      <main className="flex-1 overflow-y-auto">
-        <Routes>
-          <Route exact path="/home" element={<Home today={today} />} />
-          <Route exact path="/dashboard" element={<Dashboard clock={clock} now={now} />} />
-          <Route exact path="/alerts" element={<Alerts now={now} onAlertCountsChange={setAlertCounts} />} />
-          <Route exact path="/inspect" element={<Inspect today={today} clock={clock} />} />
-          <Route exact path="/setting" element={<Setting />} />
-          <Route exact path="/not_found" element={<Not_Found />} />
-          <Route exact path="/register" element={<Register />} />
-        </Routes>
-      </main>
-    </div>
+    <Routes>
+
+      {/* PUBLIC */}
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+
+      {/* PROTECTED */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <ProtectedLayout alertCounts={alertCounts} />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/home" element={<Home today={today} />} />
+        <Route path="/dashboard" element={<Dashboard clock={clock} now={now} />} />
+        <Route path="/alerts" element={<Alerts now={now} onAlertCountsChange={setAlertCounts} />} />
+        <Route path="/inspect" element={<Inspect today={today} clock={clock} />} />
+        <Route path="/setting" element={<Setting />} />
+      </Route>
+
+      <Route path="*" element={<Not_Found />} />
+
+    </Routes>
   );
 }
-
-// function App() {
-//   return (
-//     <>
-//       <Dashboard />
-//       {/* <BrowserRouter>
-//         <Routes>
-//           <Route exact path="/" element={<Login />} />
-//           <Route path="/register" element={<Register />} />
-//           <Route path="/dashboard" element={<Dashboard />} />
-//         </Routes>
-//       </BrowserRouter> */}
-//     </>
-//   )
-// }
-
-// export default App

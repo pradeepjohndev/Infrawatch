@@ -1,0 +1,18 @@
+import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+export default function ProtectedRoute({ children }) {
+    const [auth, setAuth] = useState(null);
+
+    useEffect(() => {
+        axios
+            .get("http://localhost:8080/auth-check", { withCredentials: true })
+            .then(() => setAuth(true))
+            .catch(() => setAuth(false));
+    }, []);
+
+    if (auth === null) return <div>Loading...</div>;
+
+    return auth ? children : <Navigate to="/" />;
+}

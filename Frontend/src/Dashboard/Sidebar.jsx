@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import logo from '../assets/react.svg';
 import { HousePlug, Menu, AlignHorizontalDistributeCenter, TriangleAlert, Settings, CircleUser, LogOut, ScanSearch } from 'lucide-react';
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Username from '../Context/Username';
 
 const menuItems = [
     { icons: <HousePlug size={20} />, label: "Home", path: "/home" },
@@ -13,6 +15,17 @@ const menuItems = [
 
 export default function Sidebar({ alertTotal }) {
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
+
+    const handleLogout = async (e) => {
+        e.stopPropagation();
+        await axios.post(
+            "http://localhost:8080/logout",
+            {},
+            { withCredentials: true }
+        );
+        navigate("/", { replace: true });
+    };
     return (
         <aside className="h-screen shrink-0">
             <nav className={`shadow-md h-screen p-2 flex flex-col duration-500 bg-blue-800 text-white 
@@ -59,22 +72,19 @@ export default function Sidebar({ alertTotal }) {
                     })}
                 </ul>
 
-                <div className="flex items-center gap-14 p-2 hover:bg-blue-500 rounded-4xl duration-500 border border-white" onClick={() => setOpen(!open)}>
+                <div className="flex items-center justify-between gap-3 p-2 hover:bg-blue-500 rounded-4xl duration-500 border border-white" onClick={() => setOpen(!open)}>
                     <div className="flex flex-row gap-2 items-center">
                         <CircleUser size={30} />
-                        <p className={`leading-4 ${!open && "w-0 translate-x-20"} duration-500 overflow-hidden text-xs text-nowrap`}>user</p>
+                        <p className={`leading-4 ${!open && "w-0 translate-x-20"} duration-500 overflow-hidden `}><Username /></p>
                     </div>
 
-                    <div className={`${!open && "w-0 translate-x-10"} duration-500 overflow-hidden flex items-center`}>
-                        <Link to="/not_found">
-                            <button className="text-sm text-gray-300 rounded-4xl bg-blue-500 hover:bg-blue-700 hover:border duration-500 p-1.5">
-                                <LogOut className="hover:text-red-500" />
-                            </button>
-                        </Link>
+                    <div className={`${!open && "w-0 translate-x-10"} duration-500 overflow-hidden flex items-center`} onClick={handleLogout}>
+                        <button className="text-sm text-gray-300 rounded-4xl bg-blue-500 hover:bg-blue-700 hover:border duration-500 p-1.5">
+                            <LogOut className="hover:text-red-400" />
+                        </button>
                     </div>
                 </div>
             </nav>
         </aside >
-
     )
 }
