@@ -1,16 +1,28 @@
 import { Doughnut } from "react-chartjs-2";
-import {Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function parseGB(value) {
-  return Number(value.replace(/[^\d.]/g, ""));
-}
+const toNumber = (value) => {
+  if (value === null || value === undefined) return 0;
+
+  if (typeof value === "number") return value;
+
+  if (typeof value === "string") {
+    const cleaned = value.replace(/[^\d.]/g, "");
+    return Number(cleaned) || 0;
+  }
+
+  return 0;
+};
 
 const DiskDonut = ({ disk }) => {
-  const used = parseGB(disk.used);
-  const free = parseGB(disk.available);
-  
+  if (!disk) return null;
+  const used = toNumber(disk.used_gb ?? disk.used);
+  const free = toNumber(disk.available_gb ?? disk.available);
+
+  if (used === 0 && free === 0) return null;
+
   const data = {
     labels: ["Used", "Free"],
     datasets: [
@@ -38,9 +50,16 @@ const DiskDonut = ({ disk }) => {
 
   return (
     <div style={{ width: "220px", textAlign: "center" }}>
-      <h4>{disk.type} ({disk.mount})</h4>
+      <h4>
+        {disk.disk_type ?? disk.type} ({disk.mount_point ?? disk.mount})
+      </h4>
+
       <Doughnut data={data} options={options} />
-      <p><b>Usage:</b> {disk.usage}</p>
+
+      <p>
+        <b>Usage:</b>{" "}
+        {toNumber(disk.usage_percent ?? disk.usage)}%
+      </p>
     </div>
   );
 };

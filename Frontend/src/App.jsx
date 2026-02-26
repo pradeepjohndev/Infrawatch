@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "./Login_page/Login";
 import Register from "./Login_page/Register";
 import Home from "./Routes/home.jsx";
@@ -36,19 +36,14 @@ export default function App() {
 
   return (
     <Routes>
-
-      {/* PUBLIC */}
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* PROTECTED */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <ProtectedLayout alertCounts={alertCounts} />
-          </ProtectedRoute>
-        }
-      >
+      <Route element={
+        <ProtectedRoute>
+          <ProtectedLayout alertCounts={alertCounts} />
+        </ProtectedRoute>
+      }>
         <Route path="/home" element={<Home today={today} />} />
         <Route path="/dashboard" element={<Dashboard clock={clock} now={now} />} />
         <Route path="/alerts" element={<Alerts now={now} onAlertCountsChange={setAlertCounts} />} />
@@ -57,7 +52,6 @@ export default function App() {
       </Route>
 
       <Route path="*" element={<Not_Found />} />
-
     </Routes>
   );
 }

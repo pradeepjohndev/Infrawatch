@@ -47,10 +47,5 @@ export function useDashboardSocket(url = `ws://localhost:8080/ws`) {
     return () => socket.close();
   }, [url]);
 
-  return {
-    ws,
-    ready,
-    pcs,
-    deviceCounts,
-  };
+  return { ws, ready, pcs, deviceCounts, };
 }
