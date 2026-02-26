@@ -1,10 +1,13 @@
 import express from "express";
+import jwt from "jsonwebtoken";
 import http from "http";
 import WebSocket, { WebSocketServer } from "ws";
 import cors from "cors";
 import dotenv from "dotenv";
 import { poolPromise, sql } from "../config/Database_connection.js";
-
+import cookieParser from "cookie-parser";
+import bcrypt from "bcrypt";
+import { verifyToken } from "../middleware/verifyToken.js";
 dotenv.config({ path: '../.env' });
 
 const app = express();
@@ -24,16 +27,226 @@ function getPcType(pc) {
   return os.toLowerCase().includes("server") ? "server" : "system";
 }
 
-app.use(cors({ origin: "*" }));
+app.use(cookieParser(), express.json());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.set("trust proxy", true);
-app.use(express.json());
 
 app.get("/", (_, res) => {
   res.send("Server running");
 });
 
+app.post("/register", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const { username, password } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+
+    const result = await pool.request()
+      .input("username", sql.NVarChar, username).input("password", sql.NVarChar, hash).query(`INSERT INTO Users (Username, PasswordHash) VALUES (@username, @password)`);
+
+    res.sendStatus(201);
+  } catch (err) {
+    console.error("register ERROR:", err);
+    res.status(500).send("Login failed");
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const { username, password } = req.body;
+
+    const result = await pool
+      .request().input("username", sql.NVarChar, username).query("SELECT * FROM Users WHERE Username = @username");
+
+    const user = result.recordset[0];
+    if (!user) return res.status(401).send("Invalid credentials");
+
+    const valid = await bcrypt.compare(password, user.PasswordHash);
+    if (!valid) return res.status(401).send("Invalid credentials");
+
+    const token = jwt.sign(
+      { id: user.UserId, username: user.Username },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    res.sendStatus(200);
+
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
+    return res.status(500).send("Login failed");
+  }
+});
+
+app.get("/auth-check", verifyToken, (req, res) => {
+  return res.json({ user: req.user });
+});
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+  res.sendStatus(200);
+});
+
+app.get("/dashboard-data", verifyToken, (req, res) => {
+  res.json({ message: "Secure dashboard data", user: req.user });
+});
+
 app.get("/api/health", (_, res) => {
   res.json({ status: "ok" });
+});
+
+
+app.post("/api/agent/register", async (req, res) => {
+  const data = req.body;
+
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool.request()
+      .input("pc_id", sql.VarChar, data.pc_id)
+      .input("hostname", sql.VarChar, data.hostname)
+      .input("ip_address", sql.VarChar, data.ip_address || null)
+      .query(`
+        MERGE dbo.devices AS target
+        USING (SELECT @pc_id AS pc_id) AS source
+        ON target.pc_id = source.pc_id
+
+        WHEN MATCHED THEN
+          UPDATE SET
+            hostname = @hostname,
+            ip_address = @ip_address,
+            last_seen = GETDATE(),
+            status = 'ONLINE',
+            updated_at = GETDATE()
+
+        WHEN NOT MATCHED THEN
+          INSERT (pc_id, hostname, ip_address, status, last_seen)
+          VALUES (@pc_id, @hostname, @ip_address, 'ONLINE', GETDATE())
+
+        OUTPUT INSERTED.id;
+      `);
+
+    const deviceId = result.recordset[0].id;
+
+    await pool.request()
+      .input("device_id", sql.BigInt, deviceId)
+      .input("manufacturer", sql.VarChar, data.manufacturer)
+      .input("model", sql.VarChar, data.model)
+      .input("cpu_brand", sql.VarChar, data.cpu_brand)
+      .input("cpu_cores", sql.Int, data.cpu_cores)
+      .input("os_distro", sql.VarChar, data.os_distro)
+      .input("os_arch", sql.VarChar, data.os_arch)
+      .input("total_memory_gb", sql.Decimal(10, 2), data.total_memory_gb)
+      .query(`
+        IF NOT EXISTS (
+          SELECT 1 FROM dbo.device_static_info WHERE device_id = @device_id
+        )
+        INSERT INTO dbo.device_static_info
+        (device_id, manufacturer, model, cpu_brand, cpu_cores, os_distro, os_arch, total_memory_gb)
+        VALUES
+        (@device_id, @manufacturer, @model, @cpu_brand, @cpu_cores, @os_distro, @os_arch, @total_memory_gb)
+      `);
+
+    res.json({ message: "Device registered successfully" });
+
+  } catch (err) {
+    console.error("Register error:", err);
+    res.status(500).json({ error: "Registration failed" });
+  }
+});
+app.post("/api/metrics", async (req, res) => {
+  const data = req.body;
+
+  try {
+    const pool = await poolPromise;
+
+    const deviceResult = await pool.request()
+      .input("pc_id", sql.VarChar, data.pc_id)
+      .query(`
+        SELECT id FROM dbo.devices WHERE pc_id = @pc_id
+      `);
+
+    if (!deviceResult.recordset.length) {
+      return res.status(404).json({ error: "Device not registered" });
+    }
+
+    const deviceId = deviceResult.recordset[0].id;
+
+    await pool.request()
+      .input("device_id", sql.BigInt, deviceId)
+      .input("cpu_load", sql.Decimal(5, 2), data.cpu_load)
+      .input("memory_used", sql.BigInt, data.memory_used)
+      .input("memory_free", sql.BigInt, data.memory_free)
+      .input("memory_total", sql.BigInt, data.memory_total)
+      .input("uptime", sql.BigInt, Math.floor(data.uptime))
+      .input("upload_kbps", sql.Decimal(10, 2), data.upload_kbps || 0)
+      .input("download_kbps", sql.Decimal(10, 2), data.download_kbps || 0)
+      .query(`
+        INSERT INTO dbo.device_metrics
+        (device_id, cpu_load, memory_used, memory_free, memory_total, uptime, upload_kbps, download_kbps)
+        VALUES
+        (@device_id, @cpu_load, @memory_used, @memory_free, @memory_total, @uptime, @upload_kbps, @download_kbps)
+      `);
+
+    if (Array.isArray(data.disks) && data.disks.length) {
+
+      const diskTable = new sql.Table("dbo.device_disks");
+      diskTable.create = false;
+
+      diskTable.columns.add("device_id", sql.BigInt, { nullable: false });
+      diskTable.columns.add("mount_point", sql.VarChar(255), { nullable: true });
+      diskTable.columns.add("disk_type", sql.VarChar(50), { nullable: true });
+      diskTable.columns.add("total_gb", sql.Decimal(10, 2), { nullable: true });
+      diskTable.columns.add("used_gb", sql.Decimal(10, 2), { nullable: true });
+      diskTable.columns.add("available_gb", sql.Decimal(10, 2), { nullable: true });
+      diskTable.columns.add("usage_percent", sql.Decimal(5, 2), { nullable: true });
+
+      data.disks.forEach(d => {
+        diskTable.rows.add(
+          deviceId,
+          String(d.mount || ""),
+          String(d.type || "Unknown"),
+          Number(d.total_gb) || 0,
+          Number(d.used_gb) || 0,
+          Number(d.available_gb) || 0,
+          Number(d.usage_percent) || 0
+        );
+      });
+      console.log("DISK SAMPLE:", data.disks[0]);
+      await pool.request().bulk(diskTable);
+    }
+    console.log("DISKS FROM AGENT:", data.disks);
+
+    await pool.request()
+      .input("device_id", sql.BigInt, deviceId)
+      .query(`
+        UPDATE dbo.devices
+        SET last_seen = GETDATE(),
+            status = 'ONLINE',
+            updated_at = GETDATE()
+        WHERE id = @device_id
+      `);
+
+    res.json({ message: "Metrics stored successfully" });
+
+  } catch (err) {
+    console.error("Metrics error FULL:", err);
+    res.status(500).json({
+      error: err.message,
+      sql: err.originalError?.info?.message
+    });
+  }
 });
 
 wss.on("connection", (ws) => {
@@ -154,109 +367,6 @@ function sendDashboardData() {
   });
 }
 
-/*app.post("/api/agent/register", async (req, res) => {
-  const data = req.body;
-
-  try {
-    const pool = await poolPromise;
-    await pool.request()
-      .input("agent_uuid", sql.VarChar, data.agent_id)
-      .input("hostname", sql.VarChar, data.hostname)
-      .query(`
-        IF NOT EXISTS (SELECT 1 FROM agents WHERE agent_uuid = @agent_uuid) INSERT INTO agents (agent_uuid, hostname) VALUES (@agent_uuid, @hostname)
-      `);
-
-    const agentResult = await pool.request()
-      .input("agent_uuid", sql.VarChar, data.agent_id)
-      .query(`SELECT agent_id FROM agents WHERE agent_uuid = @agent_uuid`);
-
-    const agentId = agentResult.recordset[0].agent_id;
-
-    await pool.request()
-      .input("agent_id", sql.Int, agentId)
-      .input("os", sql.VarChar, data.os)
-      .input("architecture", sql.VarChar, data.architecture)
-      .input("cpu_model", sql.VarChar, data.cpu_model)
-      .input("cpu_cores", sql.Int, data.cpu_cores)
-      .input("total_ram_gb", sql.Float, data.total_ram_gb)
-      .input("manufacturer", sql.VarChar, data.manufacturer)
-      .input("model", sql.VarChar, data.model)
-      .query(`
-        IF NOT EXISTS (SELECT 1 FROM system_static_info WHERE agent_id = @agent_id)
-        INSERT INTO system_static_info (agent_id,os,architecture,cpu_model,cpu_cores,total_ram_gb,manufacturer,model)
-        VALUES ( @agent_id, @os, @architecture, @cpu_model, @cpu_cores, @total_ram_gb, @manufacturer,@model)
-      `);
-
-    await pool.request()
-      .input("agent_id", sql.Int, agentId)
-      .query(`UPDATE agents SET last_seen = GETDATE() WHERE agent_id = @agent_id`);
-
-    res.json({ message: "Agent registered successfully" });
-
-  } catch (err) {
-    console.error("Register error:", err);
-    res.status(500).json({ error: "Agent registration failed" });
-  }
-});
-
- app.post("/api/metrics", async (req, res) => {
-  const data = req.body;
-
-  try {
-    const pool = await poolPromise;
-
-    const agentResult = await pool.request()
-      .input("agent_uuid", sql.VarChar, data.agent_id)
-      .query(`SELECT agent_id FROM agents WHERE agent_uuid = @agent_uuid
-      `);
-
-    if (!agentResult.recordset.length) {
-      return res.status(404).json({ error: "Agent not registered" });
-    }
-
-    const agentId = agentResult.recordset[0].agent_id;
-
-    await pool.request()
-      .input("agent_id", sql.Int, agentId)
-      .input("cpu_usage", sql.Float, data.cpu_usage)
-      .input("ram_usage", sql.Float, data.ram_usage)
-      .input("uptime_minutes", sql.BigInt, data.uptime_minutes)
-      .query(`
-        INSERT INTO system_metrics ( agent_id, cpu_usage, ram_usage, uptime_minutes)
-        VALUES ( @agent_id, @cpu_usage, @ram_usage, @uptime_minutes)
-      `);
-
-    if (Array.isArray(data.disks)) {
-      for (const disk of data.disks) {
-        await pool.request()
-          .input("agent_id", sql.Int, agentId)
-          .input("mount", sql.VarChar, disk.mount)
-          .input("disk_type", sql.VarChar, disk.type)
-          .input("total_gb", sql.Float, disk.total_gb)
-          .input("used_gb", sql.Float, disk.used_gb)
-          .input("free_gb", sql.Float, disk.free_gb)
-          .input("usage_percent", sql.Float, disk.usage_percent)
-          .query(`
-            INSERT INTO disk_metrics (agent_id, mount, disk_type, total_gb, used_gb, free_gb, usage_perce)
-            VALUES (@agent_id,@mount,@disk_type,@total_gb,@used_gb,@free_gb,@usage_percent)
-          `);
-      }
-    }
-
-    await pool.request()
-      .input("agent_id", sql.Int, agentId)
-      .query(`
-        UPDATE agents SET last_seen = GETDATE() WHERE agent_id = @agent_id
-      `);
-
-    res.json({ message: "Metrics stored successfully" });
-
-  } catch (err) {
-    console.error("Metrics error:", err);
-    res.status(500).json({ error: "Metrics insert failed" });
-  }
-}); */
-
-server.listen(8080, "0.0.0.0", () => {
+server.listen(8080, '0.0.0.0', () => {
   console.log("WebSocket + API server running on port 8080");
 });

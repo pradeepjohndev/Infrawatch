@@ -1,94 +1,113 @@
 import WebSocket from "ws";
 import dotenv from "dotenv";
-import si from "systeminformation";
-import axios from "axios";
+import si, { system } from "systeminformation";
 import os from "os";
+import axios from "axios"
 
 dotenv.config({ path: '../.env' });
 
 const SERVER_URL = process.env.SERVER_URL;
 console.log("Agent connecting to:", SERVER_URL);
 
-/* const DB_SERVER_URL = process.env.DB_SERVER_URL || "http://localhost:8080";
-const DB_INTERVAL = process.env.DB_INTERVAL || 10000; */
-
-// let dbInterval;
-// let staticSentToDB = false;
+const DB_SERVER_URL = process.env.DB_SERVER_URL;
+const DB_INTERVAL = Number(process.env.DB_INTERVAL) || 10000;
 
 let PC_ID = "UNKNOWN-PC";
 let socket;
 let metricsInterval;
 let heartbeatInterval;
 let staticPayload;
+let staticSentToDB = false;
+let diskTick = 0;
 
-const gb = bytes => (bytes / 1024 ** 3).toFixed(2) + " GB";
+const gb = bytes => Number((bytes / 1024 ** 3).toFixed(2))
 const percent = v => v.toFixed(1) + " %";
 
 async function resolvePcId() {
   try {
-    PC_ID = `${os.hostname()} - ${os.userInfo().username}` || `PC-${Math.floor(Math.random() * 10000)}`;
+    PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
+    //`${os.hostname()} - ${os.userInfo().username}` || `PC-${Math.floor(Math.random() * 10000)}`
   } catch {
     PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
   }
 }
-
-/* 
 async function sendStaticInfoToDB() {
   if (staticSentToDB || !staticPayload) return;
 
   try {
     const data = {
-      agent_id: PC_ID,
+      pc_id: PC_ID,
       hostname: PC_ID,
-      os: staticPayload.os.distro,
-      architecture: staticPayload.os.arch,
-      cpu_model: staticPayload.cpu.brand,
-      cpu_cores: staticPayload.cpu.cores,
-      total_ram_gb: parseFloat(staticPayload.memory.total),
+
       manufacturer: staticPayload.system.manufacturer,
-      model: staticPayload.system.model
+      model: staticPayload.system.model,
+
+      os_distro: staticPayload.os.distro,
+      os_arch: staticPayload.os.arch,
+
+      cpu_brand: staticPayload.cpu.brand,
+      cpu_cores: staticPayload.cpu.cores,
+
+      total_memory_gb: parseFloat(staticPayload.memory.total)
     };
 
     await axios.post(`${DB_SERVER_URL}/api/agent/register`, data);
+
     staticSentToDB = true;
     console.log("Static info stored in DB");
+
   } catch (err) {
-    console.error("Static DB error:", {
-      message: err.message,
-      code: err.code,
-      status: err.response?.status,
-      data: err.response?.data,
-    });
+    console.error("Static DB error:", err.message);
   }
 }
 
 async function sendDynamicInfoToDB() {
   try {
-    const [load, mem, time] = await Promise.all([
+    const [load, mem, time, disks] = await Promise.all([
       si.currentLoad(),
       si.mem(),
-      si.time()
+      si.time(),
+      si.fsSize()
     ]);
 
-    const data = {
-      agent_id: PC_ID,
-      cpu_usage: Number(load.currentLoad.toFixed(2)),
-      ram_usage: Number((((mem.total - mem.available) / mem.total) * 100).toFixed(2)),
-      uptime_minutes: Math.floor(time.uptime / 60),
-      timestamp: new Date().toISOString()
+    const payload = {
+      pc_id: PC_ID,
+
+      cpu_load: Number(load.currentLoad.toFixed(2)),
+
+      memory_used: mem.used,
+      memory_free: mem.available,
+      memory_total: mem.total,
+
+      uptime: Math.floor(time.uptime)
     };
 
-    await axios.post(`${DB_SERVER_URL}/api/metrics`, data);
-    console.log("Dynamic info stored in DB");
+    diskTick++;
+
+    if (diskTick >= 6) {
+      payload.disks = disks.map(d => ({
+        mount: String(d.mount || ""),
+        type: d.type || "Unknown",
+        total_gb: gb(d.size),
+        used_gb: gb(d.used),
+        available_gb: gb(d.available),
+        usage_percent: Number(d.use.toFixed(2))
+      }));
+
+      diskTick = 0;
+      console.log("Disks sent to DB");
+    }
+
+    await axios.post(`${DB_SERVER_URL}/api/metrics`, payload);
+
+    console.log("Metrics stored in DB");
+
   } catch (err) {
-    console.error("Dynamic DB error:", {
-      message: err.message,
-      code: err.code,
-      status: err.response?.status,
-      data: err.response?.data,
-    });
+    console.error("Dynamic DB error:",
+      err.response?.data || err.message
+    );
   }
-} */
+}
 
 async function connect() {
   socket = new WebSocket(SERVER_URL);
@@ -106,8 +125,8 @@ async function connect() {
       payload: staticPayload
     }));
 
-    // await sendStaticInfoToDB();
-    // dbInterval = setInterval(sendDynamicInfoToDB, DB_INTERVAL);
+    await sendStaticInfoToDB();
+    dbInterval = setInterval(sendDynamicInfoToDB, DB_INTERVAL);
 
     sendHeartbeat();
     startFastMetrics();
@@ -119,7 +138,8 @@ async function connect() {
 
     clearInterval(metricsInterval);
     clearInterval(heartbeatInterval);
-    // clearInterval(dbInterval);
+    clearInterval(dbInterval);
+    staticSentToDB = false;
 
     setTimeout(connect, 3000);
   };
@@ -221,4 +241,3 @@ function sendHeartbeat() {
   await resolvePcId();
   setTimeout(connect, 1000);
 })();
-
