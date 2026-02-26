@@ -1,5 +1,2 @@
-import { hash as _hash } from "bcrypt";
-
-_hash("test123", 10).then(hash => {
-  console.log(hash);
-});
+import { hash } from "bcrypt";
+hash("admin123", 10).then(console.log);
