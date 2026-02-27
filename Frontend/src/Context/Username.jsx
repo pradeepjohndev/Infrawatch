@@ -5,7 +5,7 @@ export default function Username() {
     const [user, setUser] = useState(null);
     useEffect(() => {
         axios
-            .get("http://localhost:8080/auth-check", { withCredentials: true })
+            .get("/api/auth-check", { withCredentials: true })
             .then((res) => setUser(res.data.user))
             .catch(() => setUser(null));
     }, []);

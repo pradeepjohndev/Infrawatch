@@ -15,13 +15,8 @@ import { useEffect, useState } from "react";
 
 export default function App() {
   const date = new Date();
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const today = `${date.getDate()} ${monthNames[date.getMonth()]}, ${date.getFullYear()}`;
-
   const [now, setNow] = useState(() => Date.now());
   const [clock, setTime] = useState("");
   const [alertCounts, setAlertCounts] = useState({ total: 0 });

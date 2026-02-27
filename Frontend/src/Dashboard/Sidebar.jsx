@@ -19,12 +19,13 @@ export default function Sidebar({ alertTotal }) {
 
     const handleLogout = async (e) => {
         e.stopPropagation();
-        await axios.post(
-            "http://localhost:8080/logout",
-            {},
-            { withCredentials: true }
-        );
-        navigate("/", { replace: true });
+        try {
+            await axios.post("/api/logout", {}, { withCredentials: true });
+            navigate("/", { replace: true });
+        }
+        catch (err) {
+            console.error("Logout failed", err);
+        }
     };
     return (
         <aside className="h-screen shrink-0">

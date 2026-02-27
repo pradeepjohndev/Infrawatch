@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
 
     useEffect(() => {
         axios
-            .get("http://localhost:8080/auth-check", { withCredentials: true })
+            .get("/api/auth-check", { withCredentials: true })
             .then(() => setAuth(true))
             .catch(() => setAuth(false));
     }, []);

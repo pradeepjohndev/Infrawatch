@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { CircleX, CircleCheck } from "lucide-react";
+import { CircleX, CircleCheck, Eye, EyeOff } from "lucide-react";
 axios.defaults.withCredentials = true;
 
 export default function Register() {
@@ -10,6 +10,8 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [isError, setIsError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post("http://localhost:8080/register", {
+      await axios.post("/api/register", {
         username, password,
       });
 
@@ -56,14 +58,23 @@ export default function Register() {
           className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-white  text-white"
           placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
 
-        <input type="password"
-          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-white  text-white"
-          placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className="relative mb-4">
+          <input type={showPassword ? "text" : "password"} className="w-full rounded border border-gray-300 bg-transparent p-2 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-        <input type="password"
-          className="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-white text-white"
-          placeholder="Re-enter Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white">
+            {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+          </button>
+        </div>
+        <div className="relative mb-4">
+          <input type={showPassword ? "text" : "password"}
+            className=" w-full rounded border border-gray-300 p-2 focus:outline-white text-white"
+            placeholder="Re-enter Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
+          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white">
+            {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+          </button>
+        </div>
         <button onClick={register}
           className="w-full rounded bg-green-600 py-2 font-semibold text-white transition hover:bg-green-700">Register</button>
 

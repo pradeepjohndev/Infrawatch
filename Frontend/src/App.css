@@ -37,3 +37,22 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper input {
+  padding-right: 40px;
+}
+
+.input-wrapper button {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}

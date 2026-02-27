@@ -22,10 +22,10 @@ export default function ThresholdCard() {
         Adjust Threshold Values
       </h3>
 
-      <div className="space-y-5">
+      <div className="space-y-5 flex">
         <Slider label="RAM Usage" value={ram} setValue={setRam} color="accent-blue-500" />
-        <Slider label="CPU Usage" value={cpu} setValue={setCpu} color="accent-red-500" />
-        <Slider label="NET Usage" value={net} setValue={setNet} color="accent-yellow-500" />
+        <Slider label="CPU Usage" value={cpu} setValue={setCpu} color="accent-blue-500" />
+        <Slider label="NET Usage" value={net} setValue={setNet} color="accent-blue-500" />
         <Slider label="Storage Usage" value={storage} setValue={setStorage} color="accent-green-500" />
       </div>
 

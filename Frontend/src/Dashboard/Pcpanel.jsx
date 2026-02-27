@@ -33,6 +33,7 @@ export default function Pcpanel({ pc, now }) {
     const cpuColor = typeof cpuLoad === "number" ? cpuLoad > 80 ? "#dc2626" : cpuLoad > 50 ? "#f59e0b" : "#22c55e" : "#94a3b8";
     const latency = pc.stats?.timestamp ? Math.min(now - pc.stats.timestamp, 10000) : null;
     const severityClass = severity === "CRITICAL" ? "border-red-500" : severity === "WARNING" ? "border-yellow-400" : "border-transparent";
+
     const os = pc.staticInfo?.os?.distro ?? "N/A";
     const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;
     const normalizedType = typeof rawType === "string" ? rawType.trim().toLowerCase() : "";
@@ -42,9 +43,7 @@ export default function Pcpanel({ pc, now }) {
         const isTarget = window.location.hash === `#pc-${pc.pcId}`;
 
         if (isTarget) {
-            document
-                .getElementById(`pc-${pc.pcId}`)
-                ?.scrollIntoView({ behavior: "smooth", block: "center" });
+            document.getElementById(`pc-${pc.pcId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }, [pc.pcId]);
 
