@@ -28,14 +28,14 @@ function getPcType(pc) {
 }
 
 app.use(cookieParser(), express.json());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));
 app.set("trust proxy", true);
 
 app.get("/", (_, res) => {
   res.send("Server running");
 });
 
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   try {
     const pool = await poolPromise;
     const { username, password } = req.body;
@@ -51,7 +51,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   try {
     const pool = await poolPromise;
     const { username, password } = req.body;
@@ -85,11 +85,11 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/auth-check", verifyToken, (req, res) => {
+app.get("/api/auth-check", verifyToken, (req, res) => {
   return res.json({ user: req.user });
 });
 
-app.post("/logout", (req, res) => {
+app.post("/api/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: false,
@@ -98,7 +98,7 @@ app.post("/logout", (req, res) => {
   res.sendStatus(200);
 });
 
-app.get("/dashboard-data", verifyToken, (req, res) => {
+app.get("/api/dashboard-data", verifyToken, (req, res) => {
   res.json({ message: "Secure dashboard data", user: req.user });
 });
 

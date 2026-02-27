@@ -18,6 +18,7 @@ let metricsInterval;
 let heartbeatInterval;
 let staticPayload;
 let staticSentToDB = false;
+let dbInterval = 0;
 let diskTick = 0;
 
 const gb = bytes => Number((bytes / 1024 ** 3).toFixed(2))
@@ -25,8 +26,7 @@ const percent = v => v.toFixed(1) + " %";
 
 async function resolvePcId() {
   try {
-    PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
-    //`${os.hostname()} - ${os.userInfo().username}` || `PC-${Math.floor(Math.random() * 10000)}`
+    PC_ID = `${os.hostname()} - ${os.userInfo().username}` || `PC-${Math.floor(Math.random() * 10000)}`;
   } catch {
     PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
   }
