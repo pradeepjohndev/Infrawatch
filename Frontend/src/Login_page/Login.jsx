@@ -21,14 +21,15 @@ export default function Login() {
     }
 
     try {
-      await axios.post("/api/login", { username, password, });
+      await axios.post(`http://${window.location.host}/api/login`, { username, password, });
 
       setMsg("Login successful");
       setIsError(false);
       setTimeout(() => navigate("/home"), 1000);
-    } catch {
+    } catch (err) {
       setMsg("Login failed");
       setIsError(true);
+      console.log(err)
     }
   };
 

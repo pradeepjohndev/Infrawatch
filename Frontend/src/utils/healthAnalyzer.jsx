@@ -10,7 +10,7 @@ export function analyzeHealth(pc) {
     const issues = [];
     const cpu = pc.stats?.cpu?.load;
     const ram = pc.stats?.memory?.used && pc.stats?.memory?.total ? (pc.stats.memory.used / pc.stats.memory.total) * 100 : null;
-    const netRate = Math.max(pc.stats?.network?.Upload ?? 0, pc.stats?.network?.download ?? 0);
+    const netRate = Math.max(pc.stats?.network?.upload ?? 0, pc.stats?.network?.download ?? 0);
 
     if (!pc.stats) { return { severity: "NORMAL", issues: [] }; }
     if (typeof cpu === "number" && cpu >= THRESHOLDS.cpu) { issues.push("CPU"); }

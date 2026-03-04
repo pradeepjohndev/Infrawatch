@@ -20,7 +20,7 @@ export default function Sidebar({ alertTotal }) {
     const handleLogout = async (e) => {
         e.stopPropagation();
         try {
-            await axios.post("/api/logout", {}, { withCredentials: true });
+            await axios.post(`http://${window.location.host}/api/logout`, {}, { withCredentials: true });
             navigate("/", { replace: true });
         }
         catch (err) {
