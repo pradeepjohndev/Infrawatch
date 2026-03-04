@@ -26,7 +26,7 @@ const percent = v => v.toFixed(1) + " %";
 
 async function resolvePcId() {
   try {
-    PC_ID = `${os.hostname()} - ${os.userInfo().username}` || `PC-${Math.floor(Math.random() * 10000)}`;
+    PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
   } catch {
     PC_ID = `PC-${Math.floor(Math.random() * 10000)}`;
   }
@@ -209,7 +209,7 @@ function startFastMetrics() {
             ip: net?.ip4 || "N/A",
             mac: net?.mac || "N/A",
             iface: net?.iface || "N/A",
-            Upload: (netlog.tx_sec / 1024).toFixed(2),
+            upload: (netlog.tx_sec / 1024).toFixed(2),
             download: (netlog.rx_sec / 1024).toFixed(2)
           },
           disks: disks.map(d => ({

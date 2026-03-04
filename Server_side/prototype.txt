@@ -1,0 +1,88 @@
+const bcrypt = require("bcrypt");
+bcrypt.hash("admin123", 10).then(console.log);
+
+INSERT INTO dbo.Users (Username, PasswordHash)
+VALUES ('admin', '$2b$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+
+USERS TABLE (as you requested earlier)
+CREATE TABLE Users (
+    UserId INT IDENTITY PRIMARY KEY,
+    Username NVARCHAR(100) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    Role NVARCHAR(50) DEFAULT 'admin',
+    CreatedAt DATETIME2 DEFAULT SYSDATETIME()
+);
+
+Correct SQL Server Version of Your Production Schema
+devices
+CREATE TABLE devices (
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    pc_id VARCHAR(100) UNIQUE NOT NULL,
+    hostname VARCHAR(255),
+    ip_address VARCHAR(50),
+    last_seen DATETIME2 NULL,
+    status VARCHAR(10) DEFAULT 'OFFLINE',
+    created_at DATETIME2 DEFAULT GETDATE(),
+    updated_at DATETIME2 DEFAULT GETDATE()
+);
+device_static_info
+CREATE TABLE device_static_info (
+    device_id BIGINT PRIMARY KEY,
+    manufacturer VARCHAR(255),
+    model VARCHAR(255),
+    cpu_brand VARCHAR(255),
+    cpu_cores INT,
+    os_distro VARCHAR(255),
+    os_arch VARCHAR(50),
+    total_memory_gb DECIMAL(10,2),
+
+    CONSTRAINT FK_static_device
+    FOREIGN KEY (device_id)
+    REFERENCES devices(id)
+    ON DELETE CASCADE
+);
+device_metrics
+CREATE TABLE device_metrics (
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    cpu_load DECIMAL(5,2),
+    memory_used BIGINT,
+    memory_free BIGINT,
+    memory_total BIGINT,
+    uptime BIGINT,
+    upload_kbps DECIMAL(10,2),
+    download_kbps DECIMAL(10,2),
+    recorded_at DATETIME2 DEFAULT GETDATE(),
+
+    CONSTRAINT FK_metrics_device
+    FOREIGN KEY (device_id)
+    REFERENCES devices(id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX idx_device_time
+ON device_metrics (device_id, recorded_at DESC);
+
+device_disks
+CREATE TABLE device_disks (
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    mount_point VARCHAR(255),
+    disk_type VARCHAR(50),
+    total_gb DECIMAL(10,2),
+    used_gb DECIMAL(10,2),
+    available_gb DECIMAL(10,2),
+    usage_percent DECIMAL(5,2),
+    recorded_at DATETIME2 DEFAULT GETDATE(),
+
+    CONSTRAINT FK_disks_device
+    FOREIGN KEY (device_id)
+    REFERENCES devices(id)
+    ON DELETE CASCADE
+);
+
+ALTER TABLE dbo.device_metrics
+ADD created_at DATETIME DEFAULT GETDATE();
+
+ALTER TABLE dbo.device_disks
+ADD created_at DATETIME DEFAULT GETDATE();

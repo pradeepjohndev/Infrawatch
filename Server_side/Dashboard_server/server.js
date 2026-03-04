@@ -28,11 +28,14 @@ function getPcType(pc) {
 }
 
 app.use(cookieParser(), express.json());
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.set("trust proxy", true);
 
 app.get("/", (_, res) => {
-  res.send("Server running");
+  return res.send("Server running");
 });
 
 app.post("/api/register", async (req, res) => {
@@ -99,13 +102,12 @@ app.post("/api/logout", (req, res) => {
 });
 
 app.get("/api/dashboard-data", verifyToken, (req, res) => {
-  res.json({ message: "Secure dashboard data", user: req.user });
+  return res.json({ message: "Secure dashboard data", user: req.user });
 });
 
 app.get("/api/health", (_, res) => {
-  res.json({ status: "ok" });
+  return res.json({ status: "ok" });
 });
-
 
 app.post("/api/agent/register", async (req, res) => {
   const data = req.body;
@@ -226,7 +228,6 @@ app.post("/api/metrics", async (req, res) => {
       console.log("DISK SAMPLE:", data.disks[0]);
       await pool.request().bulk(diskTable);
     }
-    console.log("DISKS FROM AGENT:", data.disks);
 
     await pool.request()
       .input("device_id", sql.BigInt, deviceId)
@@ -246,6 +247,123 @@ app.post("/api/metrics", async (req, res) => {
       error: err.message,
       sql: err.originalError?.info?.message
     });
+  }
+});
+
+app.get("/api/inspect", async (req, res) => {
+  const { search, date } = req.query;
+
+  try {
+    const pool = await poolPromise;
+
+    const deviceResult = await pool.request()
+      .input("search", sql.VarChar, search)
+      .query(`
+        SELECT TOP 1 *
+        FROM dbo.devices
+        WHERE pc_id LIKE '%' + @search + '%'
+OR hostname LIKE '%' + @search + '%'
+      `);
+
+    if (!deviceResult.recordset.length) {
+      return res.status(404).json({ error: "Device not found" });
+    }
+
+    const device = deviceResult.recordset[0];
+    const deviceId = device.id;
+
+    const staticInfoResult = await pool.request()
+      .input("device_id", sql.BigInt, deviceId)
+      .query(`
+        SELECT *
+        FROM dbo.device_static_info
+        WHERE device_id = @device_id
+      `);
+
+    const staticInfo = staticInfoResult.recordset[0] || {};
+
+    const metricsResult = await pool.request()
+      .input("device_id", sql.BigInt, deviceId)
+      .input(
+        "startDate",
+        sql.DateTime,
+        date ? new Date(date) : new Date("2000-01-01")
+      )
+      .query(`
+        SELECT *
+FROM dbo.device_metrics
+WHERE device_id = @device_id
+ORDER BY created_at ASC
+      `);
+
+    const disksResult = await pool.request()
+      .input("device_id", sql.BigInt, deviceId)
+      .query(`
+        SELECT *
+        FROM dbo.device_disks
+        WHERE device_id = @device_id
+      `);
+
+    const formattedPc = {
+      pcId: device.pc_id,
+      online: device.status === "ONLINE",
+
+      staticInfo: {
+        system: {
+          manufacturer: staticInfo.manufacturer,
+          model: staticInfo.model
+        },
+        cpu: {
+          brand: staticInfo.cpu_brand
+        },
+        os: {
+          distro: staticInfo.os_distro
+        }
+      },
+
+      statsHistory: metricsResult.recordset.map(m => {
+
+        const snapshotTime = new Date(m.created_at);
+
+        const disksForThisTime = disksResult.recordset.filter(d => {
+          const diskTime = new Date(d.created_at);
+          return Math.abs(diskTime - snapshotTime) < 5000; // within 5 seconds
+        });
+
+        return {
+          timestamp: snapshotTime.getTime(),
+          uptime: m.uptime,
+
+          cpu: { load: m.cpu_load },
+
+          memory: {
+            used: m.memory_used,
+            free: m.memory_free,
+            total: m.memory_total
+          },
+
+          network: {
+            upload: m.upload_kbps,
+            download: m.download_kbps
+          },
+
+          disks: disksForThisTime.map(d => ({
+            mount: d.mount_point,
+            type: d.disk_type,
+            total_gb: d.total_gb,
+            used_gb: d.used_gb,
+            available_gb: d.available_gb,
+            usage_percent: d.usage_percent
+          }))
+        };
+      })
+    };
+
+    res.json(formattedPc);
+
+  } catch (err) {
+    console.error("Inspect error:", err);
+    res.status(500).json({ error: "Failed to fetch device info" });
   }
 });
 
