@@ -28,11 +28,25 @@ function getPcType(pc) {
 }
 
 app.use(cookieParser(), express.json());
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+app.use(cors({ origin: true, credentials: true }));
 app.set("trust proxy", true);
+
+
+function requireAdmin(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).send("Unauthorized");
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== "admin") {
+      return res.status(403).send("Access denied");
+    }
+    req.user = decoded;
+    next();
+  } catch {
+    return res.status(401).send("Invalid token");
+  }
+}
 
 app.get("/", (_, res) => {
   return res.send("Server running");
@@ -41,16 +55,21 @@ app.get("/", (_, res) => {
 app.post("/api/register", async (req, res) => {
   try {
     const pool = await poolPromise;
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
     const hash = await bcrypt.hash(password, 10);
+    const userRole = role === "admin" ? "admin" : "staff";
 
-    const result = await pool.request()
-      .input("username", sql.NVarChar, username).input("password", sql.NVarChar, hash).query(`INSERT INTO Users (Username, PasswordHash) VALUES (@username, @password)`);
+    await pool.request()
+      .input("username", sql.NVarChar, username)
+      .input("password", sql.NVarChar, hash)
+      .input("role", sql.NVarChar, userRole)
+      .query(`INSERT INTO Users (Username, PasswordHash, Role) VALUES (@username, @password, @role)`);
 
     res.sendStatus(201);
+
   } catch (err) {
     console.error("register ERROR:", err);
-    res.status(500).send("Login failed");
+    res.status(500).send("Registration failed");
   }
 });
 
@@ -58,18 +77,20 @@ app.post("/api/login", async (req, res) => {
   try {
     const pool = await poolPromise;
     const { username, password } = req.body;
-
-    const result = await pool
-      .request().input("username", sql.NVarChar, username).query("SELECT * FROM Users WHERE Username = @username");
+    const result = await pool.request().input("username", sql.NVarChar, username).query("SELECT * FROM Users WHERE Username = @username");
 
     const user = result.recordset[0];
-    if (!user) return res.status(401).send("Invalid credentials");
-
     const valid = await bcrypt.compare(password, user.PasswordHash);
+
+    if (!user) return res.status(401).send("Invalid credentials");
     if (!valid) return res.status(401).send("Invalid credentials");
 
     const token = jwt.sign(
-      { id: user.UserId, username: user.Username },
+      {
+        id: user.UserId,
+        username: user.Username,
+        role: user.Role
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -85,6 +106,21 @@ app.post("/api/login", async (req, res) => {
   } catch (err) {
     console.error("LOGIN ERROR:", err);
     return res.status(500).send("Login failed");
+  }
+});
+
+app.get("/api/Authorization", (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).send("Not logged in");
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({
+      username: decoded.username,
+      role: decoded.role
+    });
+  } catch {
+    res.status(401).send("Invalid token");
   }
 });
 
