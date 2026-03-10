@@ -167,6 +167,7 @@ app.post("/api/agent/register", async (req, res) => {
     res.status(500).json({ error: "Registration failed" });
   }
 });
+
 app.post("/api/metrics", async (req, res) => {
   const data = req.body;
 
@@ -261,8 +262,7 @@ app.get("/api/inspect", async (req, res) => {
       .query(`
         SELECT TOP 1 *
         FROM dbo.devices
-        WHERE pc_id LIKE '%' + @search + '%'
-OR hostname LIKE '%' + @search + '%'
+        WHERE pc_id LIKE '%' + @search + '%' OR hostname LIKE '%' + @search + '%'
       `);
 
     if (!deviceResult.recordset.length) {
@@ -284,18 +284,23 @@ OR hostname LIKE '%' + @search + '%'
 
     const metricsResult = await pool.request()
       .input("device_id", sql.BigInt, deviceId)
-      .input(
-        "startDate",
-        sql.DateTime,
-        date ? new Date(date) : new Date("2000-01-01")
+      .input("startDate", sql.DateTime, date ? new Date(date) : new Date("2000-01-01")
       )
       .query(`
-        SELECT *
-FROM dbo.device_metrics
-WHERE device_id = @device_id
-ORDER BY created_at ASC
+        SELECT * FROM dbo.device_metrics
+        WHERE device_id = @device_id AND created_at >= @startDate
+        ORDER BY created_at ASC
       `);
 
+    const firstSeenResult = await pool.request()
+      .input("device_id", sql.BigInt, deviceId)
+      .query(`
+        SELECT MIN(created_at) AS first_seen
+        FROM dbo.device_metrics
+        WHERE device_id = @device_id
+      `);
+
+    const firstSeen = firstSeenResult.recordset[0].first_seen;
     const disksResult = await pool.request()
       .input("device_id", sql.BigInt, deviceId)
       .query(`
@@ -307,6 +312,8 @@ ORDER BY created_at ASC
     const formattedPc = {
       pcId: device.pc_id,
       online: device.status === "ONLINE",
+
+      firstSeen: firstSeen,
 
       staticInfo: {
         system: {
@@ -322,12 +329,10 @@ ORDER BY created_at ASC
       },
 
       statsHistory: metricsResult.recordset.map(m => {
-
         const snapshotTime = new Date(m.created_at);
-
         const disksForThisTime = disksResult.recordset.filter(d => {
           const diskTime = new Date(d.created_at);
-          return Math.abs(diskTime - snapshotTime) < 5000; // within 5 seconds
+          return Math.abs(diskTime - snapshotTime) < 30000
         });
 
         return {
@@ -358,9 +363,7 @@ ORDER BY created_at ASC
         };
       })
     };
-
     res.json(formattedPc);
-
   } catch (err) {
     console.error("Inspect error:", err);
     res.status(500).json({ error: "Failed to fetch device info" });

@@ -64,22 +64,7 @@ CREATE INDEX idx_device_time
 ON device_metrics (device_id, recorded_at DESC);
 
 device_disks
-CREATE TABLE device_disks (
-    id BIGINT IDENTITY(1,1) PRIMARY KEY,
-    device_id BIGINT NOT NULL,
-    mount_point VARCHAR(255),
-    disk_type VARCHAR(50),
-    total_gb DECIMAL(10,2),
-    used_gb DECIMAL(10,2),
-    available_gb DECIMAL(10,2),
-    usage_percent DECIMAL(5,2),
-    recorded_at DATETIME2 DEFAULT GETDATE(),
-
-    CONSTRAINT FK_disks_device
-    FOREIGN KEY (device_id)
-    REFERENCES devices(id)
-    ON DELETE CASCADE
-);
+ssms 
 
 ALTER TABLE dbo.device_metrics
 ADD created_at DATETIME DEFAULT GETDATE();
