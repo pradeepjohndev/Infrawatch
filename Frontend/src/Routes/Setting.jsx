@@ -2,6 +2,7 @@ import { useState } from "react";
 import Theme from "../Components/Theme.jsx";
 import { Link } from "react-router-dom";
 import ThresholdCard from "../Context/ThresholdCard.jsx";
+import Unauthorized from "../Components/Unauthorized.jsx";
 
 export default function Setting() {
     const [days, setDays] = useState(1);
@@ -15,6 +16,13 @@ export default function Setting() {
         if (days == "30 days") return 30;
         return "45";
     };
+
+    const role = localStorage.getItem("role");
+    if (role === "staff") {
+        return (
+            <Unauthorized />
+        );
+    }
 
     return (
         <div className="flex justify-between p-5 bg-white dark:bg-gray-900 text-black dark:text-white rounded shadow min-h-screen" style={{ background: "var(--bg)", color: "var(--text)" }}>
@@ -48,6 +56,7 @@ export default function Setting() {
                             </Link>
                         </button>
                     </div>
+                    {/* <ThresholdCard /> */}
                 </div>
             </div>
         </div>

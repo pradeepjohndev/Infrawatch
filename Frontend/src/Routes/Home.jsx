@@ -33,7 +33,7 @@ export default function Home({ ws, today }) {
                             <p className="text-white text-sm">Action required for the following systems</p>
                         </h3>
                         <Link to="/alerts">
-                            <button className="text-sm px-4 py-2 rounded-xl bg-white/20 hover:bg-white/10 hover:border ease-in-out text-white duration-300">View all</button>
+                            <button className="text-sm px-4 py-2 rounded-xl bg-white/20 hover:bg-white/10 hover:border hover:cursor-pointer ease-in-out text-white duration-300">View all</button>
                         </Link>
                     </div>
                     <div className="space-y-2 max-h-70 overflow-y-auto scrollbar-color-blue-200 pr-1">
@@ -117,7 +117,7 @@ export default function Home({ ws, today }) {
                             <p className="text-white text-sm">Check all the devices</p>
                         </h3>
                         <Link to="/dashboard">
-                            <button className="text-sm px-4 py-2 rounded-xl bg-white/20 hover:bg-white/10 hover:border ease-in-out text-white duration-300">View all</button>
+                            <button className="text-sm px-4 py-2 rounded-xl bg-white/20 hover:bg-white/10 hover:border hover:cursor-pointer ease-in-out text-white duration-300">View all</button>
                         </Link>
                     </div>
 

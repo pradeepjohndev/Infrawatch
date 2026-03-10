@@ -1,17 +1,19 @@
 import { Routes, Route } from "react-router-dom";
+import { lazy, Suspense, useEffect, useState } from "react";
 import Login from "./Login_page/Login";
-import Register from "./Login_page/Register";
-import Home from "./Routes/home.jsx";
-import Inspect from "./Routes/Inspect.jsx";
-import Dashboard from "./Dashboard/Dashboard.jsx";
-import Alerts from "./Routes/Alerts.jsx";
-import Setting from "./Routes/Setting.jsx";
-import Not_Found from "./Components/not_found.jsx";
 import ProtectedRoute from "./Login_page/ProtectedRoute.jsx";
-import ProtectedLayout from "./Login_page/ProtectedLayout.jsx";
+import Loading from "./Components/Loading.jsx";
 import "./App.css";
 import "./Style.css";
-import { useEffect, useState } from "react";
+
+const Register = lazy(() => import("./Login_page/Register"));
+const Home = lazy(() => import("./Routes/Home.jsx"));
+const Inspect = lazy(() => import("./Routes/Inspect.jsx"));
+const Dashboard = lazy(() => import("./Dashboard/Dashboard.jsx"));
+const Alerts = lazy(() => import("./Routes/Alerts.jsx"));
+const Setting = lazy(() => import("./Routes/Setting.jsx"));
+const Not_Found = lazy(() => import("./Components/Not_found.jsx"));
+const ProtectedLayout = lazy(() => import("./Login_page/ProtectedLayout.jsx"));
 
 export default function App() {
   const date = new Date();
@@ -30,23 +32,25 @@ export default function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+    <Suspense fallback={<Loading message="Loading page..." />}>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-      <Route element={
-        <ProtectedRoute>
-          <ProtectedLayout alertCounts={alertCounts} />
-        </ProtectedRoute>
-      }>
-        <Route path="/home" element={<Home today={today} />} />
-        <Route path="/dashboard" element={<Dashboard clock={clock} now={now} />} />
-        <Route path="/alerts" element={<Alerts now={now} onAlertCountsChange={setAlertCounts} />} />
-        <Route path="/inspect" element={<Inspect today={today} clock={clock} />} />
-        <Route path="/setting" element={<Setting />} />
-      </Route>
+        <Route element={
+          <ProtectedRoute>
+            <ProtectedLayout alertCounts={alertCounts} />
+          </ProtectedRoute>
+        }>
+          <Route path="/home" element={<Home today={today} />} />
+          <Route path="/dashboard" element={<Dashboard clock={clock} now={now} />} />
+          <Route path="/alerts" element={<Alerts now={now} onAlertCountsChange={setAlertCounts} />} />
+          <Route path="/inspect" element={<Inspect today={today} clock={clock} />} />
+          <Route path="/setting" element={<Setting />} />
+        </Route>
 
-      <Route path="*" element={<Not_Found />} />
-    </Routes>
+        <Route path="*" element={<Not_Found />} />
+      </Routes>
+    </Suspense>
   );
 }

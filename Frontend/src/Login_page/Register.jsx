@@ -11,8 +11,7 @@ export default function Register() {
   const [msg, setMsg] = useState("");
   const [isError, setIsError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-
+  const [role, setRole] = useState("staff");
   const navigate = useNavigate();
 
   const register = async () => {
@@ -35,8 +34,8 @@ export default function Register() {
     }
 
     try {
-      await axios.post(`http://${window.location.host}/api/register`, {
-        username, password,
+      await axios.post(`http://localhost:8080/api/register`, {
+        username, password, role
       });
 
       setMsg("Registered successfully");
@@ -75,6 +74,16 @@ export default function Register() {
             {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
           </button>
         </div>
+
+        <div className="mb-4 text-left text-white">
+          <p className="mb-2 text-sm">Select Role</p>
+          <label className="mr-4">
+            <input type="radio" name="role" value="admin" checked={role === "admin"} onChange={(e) => setRole(e.target.value)} className="mr-1" />Admin </label>
+
+          <label>
+            <input type="radio" name="role" value="staff" checked={role === "staff"} onChange={(e) => setRole(e.target.value)} className="mr-1" />Staff</label>
+        </div>
+
         <button onClick={register}
           className="w-full rounded bg-green-600 py-2 font-semibold text-white transition hover:bg-green-700">Register</button>
 

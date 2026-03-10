@@ -19,6 +19,6 @@ export default function Theme() {
         <span className="inline-flex items-center gap-1">
           <SunIcon /> Light theme
         </span>
-      )}    </button>
+      )} </button>
   );
 }

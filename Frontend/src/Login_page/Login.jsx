@@ -2,15 +2,39 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { CircleX, CircleCheck, Eye, EyeOff } from "lucide-react";
+import Carousel from "../Components/Carousel";
+import Loading from "../Components/Loading";
+import image1 from "../assets/image1.png";
+import image2 from "../assets/image2.png";
+import image3 from "../assets/image3.png";
+import logo from "../assets/react.svg";
 axios.defaults.withCredentials = true;
 
 export default function Login() {
+  const slides = [
+    {
+      title: "Real time monitoring",
+      subtitle: "Monitor IT assets real time using infrawatch",
+      image: image1,
+    },
+    {
+      title: "Use our inspect modee to inspect your IT assets",
+      subtitle: "Inspect mode allows you to inspect your IT assets in detail",
+      image: image2,
+    },
+    {
+      title: "Get notified about your IT assets",
+      subtitle: "Get real-time notifications about your IT assets",
+      image: image3,
+    }
+  ];
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [isError, setIsError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const login = async () => {
@@ -21,38 +45,61 @@ export default function Login() {
     }
 
     try {
-      await axios.post(`http://${window.location.host}/api/login`, { username, password, });
+      setIsLoading(true);
+      await axios.post(`http://localhost:8080/api/login`, {
+        username,
+        password,
+      });
+
+      const currentUser = await axios.get(`http://localhost:8080/api/Authorization`);
+      const role = currentUser.data.role;
+
+      localStorage.setItem("role", role);
 
       setMsg("Login successful");
       setIsError(false);
-      setTimeout(() => navigate("/home"), 1000);
+      navigate("/home");
+
     } catch (err) {
       setMsg("Login failed");
       setIsError(true);
-      console.log(err)
+      setIsLoading(false);
+      console.log(err);
     }
   };
 
+  if (isLoading) return <Loading message="Signing you in..." />;
+
   return (
     <>
-      <div className="flex h-screen w-screen items-center bg-gray-900 justify-evenly">
-        <div className="w-[320px] rounded-lg bg-gray-700 p-6 text-center shadow-lg">
-          <h1 className="mb-6 text-2xl font-semibold text-white">Login</h1>
+      <div className="flex h-screen w-screen items-center justify-evenly bg-gray-900 relative">
+        <aside>
+          <Carousel slides={slides} autoPlay={true} />
+        </aside>
+
+        <div className="relative right-0 top-0 h-full w-full md:w-1/2 bg-gray-800/80 backdrop-blur-sm p-8 flex flex-col justify-center">
+          <p className="text-white text-xs font-bold flex items-center gap-2"><img src={logo} alt="Infrawatch" className="h-8 w-8" /> Infrawatch</p>
+          <h1 className="text-2xl font-semibold text-white">Welcome back.</h1>
+          <p className="py-6 text-gray-400">Enter your username and password to access your account.</p>
+
+          <label className="text-sm text-gray-300">Username</label>
 
           <input className="mb-4 w-full rounded border border-gray-300 bg-transparent p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
 
           <div className="relative mb-4">
+            <label className="text-sm text-gray-300">Password</label>
+
             <input type={showPassword ? "text" : "password"} className="w-full rounded border border-gray-300 bg-transparent p-2 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white">
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 text-gray-300 hover:text-white hover:cursor-pointer">
               {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
             </button>
           </div>
 
-          <button onClick={login} className="w-full rounded bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700">
-            Login
+          <button onClick={login} disabled={isLoading} className="mt-6 w-full rounded bg-blue-600 py-2 font-semibold text-white transition hover:cursor-pointer hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70">
+            {isLoading ? "Signing in..." : "Login"}
           </button>
 
           {msg && (
@@ -61,8 +108,8 @@ export default function Login() {
               <span>{msg}</span>
             </div>
           )}
-        </div >
-      </div >
+        </div>
+      </div>
     </>
   );
 }

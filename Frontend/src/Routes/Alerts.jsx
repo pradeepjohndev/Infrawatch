@@ -62,7 +62,7 @@ export default function Alerts({ now = 0, onAlertCountsChange }) {
                 <input type="text" placeholder="Search by PC ID" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                     className="flex-4 bg-gray-200 text-black px-2 py-2 rounded-md border focus:border-sky-500 focus:outline-none" />
 
-                <select value={severityFilter} onChange={(e) => setSeverityFilter(e.target.value)} className="flex-1 px-2 py-2 bg-white rounded-md text-black font-medium border focus:border-sky-500">
+                <select value={severityFilter} onChange={(e) => setSeverityFilter(e.target.value)} className="flex-1 px-2 py-2 bg-white rounded-md text-black font-medium border focus:border-sky-500 hover:cursor-pointer">
                     <option value="ALL">All severities</option>
                     <option value="WARNING">Warning</option>
                     <option value="CRITICAL">Critical</option>
