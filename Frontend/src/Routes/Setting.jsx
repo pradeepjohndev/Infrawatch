@@ -44,7 +44,7 @@ export default function Setting() {
 
                     <div className="mt-6 p-4 bg-gray-400/90 rounded-md w-96 flex-row gap-2">
                         <h2 className="font-semibold">Appearance</h2>
-                        <div className="">
+                        <div className="hover:cursor-pointer">
                             <Theme />
                         </div>
                     </div>
@@ -53,6 +53,14 @@ export default function Setting() {
                         <button className="px-4 py-2 bg-gray-500 rounded hover:bg-gray-600 transition">
                             <Link to="/register" className="text-white no-underline">
                                 <p className="text-white">Register</p>
+                            </Link>
+                        </button>
+                    </div>
+                    <div className="mt-6 p-4 bg-gray-400/90 rounded-md w-96 flex gap-2 items-center">
+                        <h3>Reset password or role?</h3>
+                        <button className="px-4 py-2 bg-gray-500 rounded hover:bg-gray-600 transition">
+                            <Link to="/reset" className="text-white no-underline">
+                                <p className="text-white">Reset</p>
                             </Link>
                         </button>
                     </div>

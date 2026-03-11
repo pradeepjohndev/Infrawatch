@@ -1,17 +1,39 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import image1 from "../assets/image1.png";
+import image2 from "../assets/image2.png";
+import image3 from "../assets/image3.png";
+
+const slides = [
+    {
+        title: "Effortlessly manage your Assets and Operations.",
+        subtitle: "Login to access and manage your team and operations with ease.",
+        image: image1,
+    },
+    {
+        title: "Use our inspect mode to inspect your IT assets",
+        subtitle: "Inspect mode allows you to inspect your IT assets in detail",
+        image: image2,
+    },
+    {
+        title: "Get notified about your IT assets",
+        subtitle: "Get real-time notifications about your IT assets",
+        image: image3,
+    }
+];
 
 const Slide = ({ imageSrc, title, subtitle }) => (
     <div className="relative w-full rounded-4xl overflow-hidden">
+        <div className="inset-0 bg-black/50 rounded-4xl absolute"></div>
         <img src={imageSrc} alt={title} className="w-full h-screen object-cover" />
 
         <div className="absolute bottom-5 left-5 right-5 text-white">
-            <h3 className="text-xl font-semibold drop-shadow-lg">{title}</h3>
+            <h3 className="text-4xl font-semibold drop-shadow-lg">{title}</h3>
             <p className="drop-shadow-lg">{subtitle}</p>
         </div>
     </div>
 );
 
-const Carousel = ({ slides = [], autoPlay = true, activeSlideDuration = 5000 }) => {
+const Carousel = ({ autoPlay = true, activeSlideDuration = 5000 }) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const autoSlide = useRef(null);
 
@@ -19,7 +41,7 @@ const Carousel = ({ slides = [], autoPlay = true, activeSlideDuration = 5000 }) 
         setActiveIndex((prev) =>
             prev + 1 === slides.length ? 0 : prev + 1
         );
-    }, [slides.length]);
+    }, []);
 
     const prevSlide = () => {
         setActiveIndex((prev) =>

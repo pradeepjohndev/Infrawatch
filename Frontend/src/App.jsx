@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import Login from "./Login_page/Login";
 import ProtectedRoute from "./Login_page/ProtectedRoute.jsx";
 import Loading from "./Components/Loading.jsx";
+import Reset from "./Login_page/Reset.jsx";
 import "./App.css";
 import "./Style.css";
 
@@ -36,6 +37,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/reset" element={<Reset />} />
 
         <Route element={
           <ProtectedRoute>

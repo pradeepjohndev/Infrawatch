@@ -4,30 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { CircleX, CircleCheck, Eye, EyeOff } from "lucide-react";
 import Carousel from "../Components/Carousel";
 import Loading from "../Components/Loading";
-import image1 from "../assets/image1.png";
-import image2 from "../assets/image2.png";
-import image3 from "../assets/image3.png";
 import logo from "../assets/react.svg";
 axios.defaults.withCredentials = true;
 
 export default function Login() {
-  const slides = [
-    {
-      title: "Real time monitoring",
-      subtitle: "Monitor IT assets real time using infrawatch",
-      image: image1,
-    },
-    {
-      title: "Use our inspect modee to inspect your IT assets",
-      subtitle: "Inspect mode allows you to inspect your IT assets in detail",
-      image: image2,
-    },
-    {
-      title: "Get notified about your IT assets",
-      subtitle: "Get real-time notifications about your IT assets",
-      image: image3,
-    }
-  ];
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -73,8 +53,9 @@ export default function Login() {
   return (
     <>
       <div className="flex h-screen w-screen items-center justify-evenly bg-gray-900 relative">
+        <div className="absolute inset-0 bg-black/50 rounded-4xl"></div>
         <aside>
-          <Carousel slides={slides} autoPlay={true} />
+          <Carousel autoPlay={true} />
         </aside>
 
         <div className="relative right-0 top-0 h-full w-full md:w-1/2 bg-gray-800/80 backdrop-blur-sm p-8 flex flex-col justify-center">
