@@ -31,7 +31,6 @@ app.use(cookieParser(), express.json());
 app.use(cors({ origin: true, credentials: true }));
 app.set("trust proxy", true);
 
-
 function requireAdmin(req, res, next) {
   const token = req.cookies.token;
   if (!token) return res.status(401).send("Unauthorized");
@@ -121,6 +120,42 @@ app.get("/api/Authorization", (req, res) => {
     });
   } catch {
     res.status(401).send("Invalid token");
+  }
+});
+
+app.post("/api/reset", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const { username, action, password, role } = req.body;
+
+    if (!username || !action) {
+      return res.status(400).send("Missing required fields");
+    }
+
+    const userCheck = await pool.request().input("username", sql.NVarChar, username).query("SELECT * FROM Users WHERE Username = @username");
+    if (userCheck.recordset.length === 0) return res.status(404).send("User not found");
+
+    if (action === "password") {
+      if (!password) {
+        return res.status(400).send("Password required");
+      }
+
+      const hash = await bcrypt.hash(password, 10);
+
+      await pool.request().input("username", sql.NVarChar, username).input("password", sql.NVarChar, hash).query(`UPDATE Users SET PasswordHash = @password WHERE Username = @username`);
+      return res.status(200).send("Password updated");
+    }
+
+    if (action === "role") {
+      const userRole = role === "admin" ? "admin" : "staff";
+      await pool.request().input("username", sql.NVarChar, username).input("role", sql.NVarChar, userRole).query(`UPDATE Users SET Role = @role WHERE Username = @username`);
+      return res.status(200).send("Role updated");
+    }
+    return res.status(400).send("Invalid action");
+
+  } catch (err) {
+    console.error("RESET ERROR:", err);
+    res.status(500).send("Reset operation failed");
   }
 });
 
