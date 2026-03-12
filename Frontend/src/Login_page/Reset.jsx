@@ -47,7 +47,7 @@ export default function Reset() {
                 password: action === "password" ? password : undefined,
                 role: action === "role" ? role : undefined
             };
-            await axios.post("http://localhost:8080/api/reset", payload);
+            await axios.post(`http://${window.location.host}/api/reset`, payload);
             setMsg("Changes made successful");
             setIsError(false);
             setIsLoading(false);

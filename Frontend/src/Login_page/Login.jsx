@@ -26,12 +26,12 @@ export default function Login() {
 
     try {
       setIsLoading(true);
-      await axios.post(`http://localhost:8080/api/login`, {
+      await axios.post(`http://${window.location.host}/api/login`, {
         username,
         password,
       });
 
-      const currentUser = await axios.get(`http://localhost:8080/api/Authorization`);
+      const currentUser = await axios.get(`http://${window.location.host}/api/Authorization`);
       const role = currentUser.data.role;
 
       localStorage.setItem("role", role);

@@ -35,7 +35,7 @@ export default function Register() {
     }
 
     try {
-      await axios.post(`http://localhost:8080/api/register`, {
+      await axios.post(`http://${window.location.host}/api/register`, {
         username, password, role
       });
 

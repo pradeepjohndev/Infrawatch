@@ -30,7 +30,7 @@ export default function Inspect({ today, clock }) {
             setHistory([]);
             setCurrentIndex(0);
             // ${window.location.host} localhost:8080
-            const res = await axios.get(`http://localhost:8080/api/inspect`, { params: { search, date, time } });
+            const res = await axios.get(`http://${window.location.host}/api/inspect`, { params: { search, date, time } });
             const data = res.data;
             console.log("Inspect API Response:", res.data);
 

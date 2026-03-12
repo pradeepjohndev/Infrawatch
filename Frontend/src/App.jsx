@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense, useEffect, useState } from "react";
 import Login from "./Login_page/Login";
 import ProtectedRoute from "./Login_page/ProtectedRoute.jsx";
+import AdminRoute from "./Login_page/AdminRoute.jsx";
 import Loading from "./Components/Loading.jsx";
 import Reset from "./Login_page/Reset.jsx";
 import "./App.css";
@@ -36,8 +37,26 @@ export default function App() {
     <Suspense fallback={<Loading message="Loading page..." />}>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/reset" element={<Reset />} />
+        <Route
+          path="/register"
+          element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <Register />
+              </AdminRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reset"
+          element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <Reset />
+              </AdminRoute>
+            </ProtectedRoute>
+          }
+        />
 
         <Route element={
           <ProtectedRoute>
