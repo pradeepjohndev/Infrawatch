@@ -31,18 +31,40 @@ app.use(cookieParser(), express.json());
 app.use(cors({ origin: true, credentials: true }));
 app.set("trust proxy", true);
 
-function requireAdmin(req, res, next) {
-  const token = req.cookies.token;
-  if (!token) return res.status(401).send("Unauthorized");
+async function requireAdmin(req, res, next) {
+  const token = req.cookies?.token;
+  if (!token) {
+    return res.status(401).send("Unauthorized - No token");
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== "admin") {
-      return res.status(403).send("Access denied");
+    if (!decoded || !decoded.id) {
+      return res.status(401).send("Invalid token");
     }
+
+    const tokenRole = String(decoded.role || "").trim().toLowerCase();
+    if (tokenRole !== "admin") {
+      return res.status(403).send("Access denied - Admin only");
+    }
+
+    const pool = await poolPromise;
+    const userResult = await pool.request()
+      .input("userId", sql.Int, decoded.id)
+      .query("SELECT Role FROM Users WHERE UserId = @userId");
+
+    if (!userResult.recordset.length) {
+      return res.status(401).send("Invalid token");
+    }
+
+    const currentRole = String(userResult.recordset[0].Role || "").trim().toLowerCase();
+    if (currentRole !== "admin") {
+      return res.status(403).send("Access denied - Admin only");
+    }
+
     req.user = decoded;
     next();
-  } catch {
+  } catch (err) {
     return res.status(401).send("Invalid token");
   }
 }
@@ -51,7 +73,7 @@ app.get("/", (_, res) => {
   return res.send("Server running");
 });
 
-app.post("/api/register", async (req, res) => {
+app.post("/api/register", requireAdmin, async (req, res) => {
   try {
     const pool = await poolPromise;
     const { username, password, role } = req.body;
@@ -123,7 +145,7 @@ app.get("/api/Authorization", (req, res) => {
   }
 });
 
-app.post("/api/reset", async (req, res) => {
+app.post("/api/reset", requireAdmin, async (req, res) => {
   try {
     const pool = await poolPromise;
     const { username, action, password, role } = req.body;
