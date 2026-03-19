@@ -15,6 +15,7 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: "/ws" });
 const pcs = new Map();
 const dashboards = new Set();
+const PORT = process.env.PORT || 8080;
 
 function getPcType(pc) {
   const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;
@@ -207,7 +208,6 @@ app.post("/api/agent/register", async (req, res) => {
 
   try {
     const pool = await poolPromise;
-
     const result = await pool.request()
       .input("pc_id", sql.VarChar, data.pc_id)
       .input("hostname", sql.VarChar, data.hostname)
@@ -581,6 +581,6 @@ function sendDashboardData() {
   });
 }
 
-server.listen(8080, '0.0.0.0', () => {
-  console.log("WebSocket + API server running on port 8080");
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`WebSocket + API server running on port:${PORT}`);
 });
