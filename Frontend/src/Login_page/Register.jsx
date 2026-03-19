@@ -2,8 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { CircleX, CircleCheck, Eye, EyeOff } from "lucide-react";
-axios.defaults.withCredentials = true;
 import Carousel from "../Components/Carousel";
+axios.defaults.withCredentials = true;
 
 export default function Register() {
   const [username, setUsername] = useState("");

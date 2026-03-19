@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 export function useDashboardSocket(url = `ws://${window.location.host}/ws`) {
   const [ws, setWs] = useState(null);
   const [ready, setReady] = useState(false);
-
   const [pcs, setPcs] = useState([]);
   const [deviceCounts, setCounts] = useState({
     total: 0,

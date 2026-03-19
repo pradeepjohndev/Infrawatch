@@ -15,10 +15,7 @@ export default function Alerts({ now = 0, onAlertCountsChange }) {
 
     const warningCount = useMemo(() => alertPcs.filter((item) => item.severity === "WARNING").length, [alertPcs]);
     const criticalCount = useMemo(() => alertPcs.filter((item) => item.severity === "CRITICAL").length, [alertPcs]);
-    const alert_total = useMemo(
-        () => alertPcs.filter((item) => item.severity === "WARNING" || item.severity === "CRITICAL").length,
-        [alertPcs]
-    );
+    const alert_total = useMemo(() => alertPcs.filter((item) => item.severity === "WARNING" || item.severity === "CRITICAL").length, [alertPcs]);
 
     useEffect(() => {
         onAlertCountsChange?.({ total: alert_total });

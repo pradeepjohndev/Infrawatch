@@ -37,26 +37,20 @@ export default function App() {
     <Suspense fallback={<Loading message="Loading page..." />}>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route
-          path="/register"
-          element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <Register />
-              </AdminRoute>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reset"
-          element={
-            <ProtectedRoute>
-              <AdminRoute>
-                <Reset />
-              </AdminRoute>
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/register" element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <Register />
+            </AdminRoute>
+          </ProtectedRoute>
+        } />
+        <Route path="/reset" element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <Reset />
+            </AdminRoute>
+          </ProtectedRoute>
+        } />
 
         <Route element={
           <ProtectedRoute>
