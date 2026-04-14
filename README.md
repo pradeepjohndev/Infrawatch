@@ -19,7 +19,7 @@ Screenshots
 Dashboard Overview
 
 ### Asset Management Page
-![App Screenshot](../picture/home page.png)
+![App Screenshot](.picture/Home page.png)
 
 ### Agent Monitoring
 
