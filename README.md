@@ -18,11 +18,12 @@ The system consists of three main components:
 Screenshots
 Dashboard Overview
 
-### 🔹 Asset Management Page
+### Asset Management Page
+![App Screenshot](../picture/home page.png)
 
-### 🔹 Agent Monitoring
+### Agent Monitoring
 
-### 🔹 Backend API Testing (Postman)
+### Backend API Testing (Postman)
 
 Tech Stack
 Frontend
