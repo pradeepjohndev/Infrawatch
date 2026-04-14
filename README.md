@@ -17,18 +17,40 @@ The system consists of three main components:
 
 Screenshots
 Dashboard Overview
+### Login page
+![App Screenshot](picture/login.png)
 
-### Asset Management Page
-![App Screenshot](picture/dashboard.png)
+### Asset Management home page
+![App Screenshot](picture/home_dashboard.png)
 
-### Agent Monitoring
+### Agent Monitoring dashboard panel
+![App Screenshot](picture/dashboard_.png)
+![App Screenshot](picture/dashboard_pc_panel.png)
+![App Screenshot](picture/dashboard_pc_panel_1.png)
+![App Screenshot](picture/dashboard_pc_panel_2.png)
+![App Screenshot](picture/dashboard_pc_panel_3.png)
 
+### Alert dashboard
+![App Screenshot](picture/alert_page.png)
+
+### inspect section
+![App Screenshot](picture/inspect_page.png)
+
+### Setting and user management
+![App Screenshot](picture/setting_page.png)
+![App Screenshot](picture/manage_user.png)
+![App Screenshot](picture/account_creation.png)
 
 ### Backend API Testing (Postman)
+![App Screenshot](picture/API_route_check.png)
+![App Screenshot](picture/API_auth.png)
+![App Screenshot](picture/API_unauth.png)
+![App Screenshot](picture/websocket_testing.png)
 
 Tech Stack
 Frontend
 * React.js
+* Chart.js
 * Axios
 * Tailwind CSS / CSS
 
@@ -36,13 +58,12 @@ Backend
 * Node.js
 * Express.js
 * REST API Architecture
+* Socket.io
 
 Database
-
 * MSSQL
 
 Agent
-
 * Node.js-based agent
 * Collects system data (CPU, memory, etc.)
 
@@ -115,9 +136,9 @@ node system-monitor.js
 ```
 
 Future Enhancements
-Alert/notification system
-Advanced analytics dashboard
-Cloud deployment (AWS/Docker)
+* Alert/notification system
+* Advanced analytics dashboard
+* Cloud deployment (AWS/Azure)
 
 Author
 Pradeep John
