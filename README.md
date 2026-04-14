@@ -19,9 +19,10 @@ Screenshots
 Dashboard Overview
 
 ### Asset Management Page
-![App Screenshot](.picture/Home page.png)
+![App Screenshot](picture/dashboard.png)
 
 ### Agent Monitoring
+
 
 ### Backend API Testing (Postman)
 
