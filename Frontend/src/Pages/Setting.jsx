@@ -2,7 +2,7 @@ import { useState } from "react";
 import Theme from "../Components/Theme.jsx";
 import { Link } from "react-router-dom";
 import ThresholdCard from "../Context/ThresholdCard.jsx";
-import Unauthorized from "../Components/Unauthorized.jsx";
+import Unauthorized from "./Unauthorized.jsx";
 
 export default function Setting() {
     const [days, setDays] = useState(1);

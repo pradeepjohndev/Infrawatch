@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "../Components/Loading.jsx";
-import Unauthorized from "../Components/Unauthorized.jsx";
+import Unauthorized from "../Pages/Unauthorized.jsx";
 
 export default function AdminRoute({ children }) {
   const [status, setStatus] = useState("checking");

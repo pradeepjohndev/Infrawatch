@@ -3,7 +3,7 @@ import logo from '../assets/react.svg';
 import { HousePlug, Menu, AlignHorizontalDistributeCenter, TriangleAlert, Settings, CircleUser, LogOut, ScanSearch } from 'lucide-react';
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Username from '../Context/Username';
+import Username from '../../Context/Username';
 
 const menuItems = [
     { icons: <HousePlug size={20} />, label: "Home", path: "/home" },

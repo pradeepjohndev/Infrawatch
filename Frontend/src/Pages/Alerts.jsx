@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { CircleAlert, TriangleAlert } from "lucide-react";
-import PCPanel from "../Dashboard/Pcpanel";
+import PCPanel from "../Components/Dashboard/Pcpanel";
 import { analyzeHealth } from "../utils/healthAnalyzer";
 import { useDashboardSocket } from "../Helper/useDashboardSocket";
 

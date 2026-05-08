@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Collapse } from "react-collapse";
-import DiskDonut from "../Components/Diskdonut";
-import Netlog from "../Components/Netlog";
-import Cpuload from "../Components/Cpuload";
-import RAMStackedBar from "../Components/RAMStackedBar";
+import DiskDonut from "../Charts/Diskdonut";
+import Netlog from "../Charts/Netlog";
+import Cpuload from "../Charts/Cpuload";
+import RAMStackedBar from "../Charts/RAMStackedBar";
 import { analyzeHealth } from "../utils/healthAnalyzer";
 import { GoDotFill } from "react-icons/go";
 import { HardDrive, Wifi, Activity, Laptop, Cpu, ArrowUpRight, ArrowDownRight, CircleArrowRight, CircleArrowDown, Server } from 'lucide-react';

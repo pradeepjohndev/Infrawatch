@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Calendar, Clock } from "lucide-react";
-import Pcpanel from "../Dashboard/Pcpanel";
+import Pcpanel from "../Components/Dashboard/Pcpanel.jsx";
 
 export default function Inspect({ today, clock }) {
 

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import Devices from "../Components/Device";
+import Devices from "../Device";
 import PCPanel from "./Pcpanel";
 import { useLocation } from "react-router-dom";
 import { Computer, Server } from "lucide-react"

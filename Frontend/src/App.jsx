@@ -1,21 +1,21 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense, useEffect, useState } from "react";
-import Login from "./Login_page/Login";
-import ProtectedRoute from "./Login_page/ProtectedRoute.jsx";
-import AdminRoute from "./Login_page/AdminRoute.jsx";
+import Login from "./Auth/Login.jsx";
+import ProtectedRoute from "./Auth/ProtectedRoute.jsx";
+import AdminRoute from "./Auth/AdminRoute.jsx";
 import Loading from "./Components/Loading.jsx";
-import Reset from "./Login_page/Reset.jsx";
+import Reset from "./Auth/Reset.jsx";
 import "./App.css";
 import "./Style.css";
 
-const Register = lazy(() => import("./Login_page/Register"));
-const Home = lazy(() => import("./Routes/Home.jsx"));
-const Inspect = lazy(() => import("./Routes/Inspect.jsx"));
-const Dashboard = lazy(() => import("./Dashboard/Dashboard.jsx"));
-const Alerts = lazy(() => import("./Routes/Alerts.jsx"));
-const Setting = lazy(() => import("./Routes/Setting.jsx"));
-const Not_Found = lazy(() => import("./Components/Not_found.jsx"));
-const ProtectedLayout = lazy(() => import("./Login_page/ProtectedLayout.jsx"));
+const Register = lazy(() => import("./Pages/Register"));
+const Home = lazy(() => import("./Pages/Home.jsx"));
+const Inspect = lazy(() => import("./Pages/Inspect.jsx"));
+const Dashboard = lazy(() => import("./Components/Dashboard/Dashboard.jsx"));
+const Alerts = lazy(() => import("./Pages/Alerts.jsx"));
+const Setting = lazy(() => import("./Pages/Setting.jsx"));
+const Not_Found = lazy(() => import("./Pages/Not_found.jsx"));
+const ProtectedLayout = lazy(() => import("./Auth/ProtectedLayout.jsx"));
 
 export default function App() {
   const date = new Date();

@@ -1,4 +1,4 @@
-import Sidebar from "../Dashboard/Sidebar";
+import Sidebar from "../Components/Dashboard/Sidebar.jsx";
 import { Outlet } from "react-router-dom";
 
 export default function ProtectedLayout({ alertCounts }) {
