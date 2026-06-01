@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import logo from '../assets/react.svg';
+import logo from '../../assets/react.svg';
 import { HousePlug, Menu, AlignHorizontalDistributeCenter, TriangleAlert, Settings, CircleUser, LogOut, ScanSearch } from 'lucide-react';
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -19,7 +19,7 @@ export default function Sidebar({ alertTotal }) {
     const handleLogout = async (e) => {
         e.stopPropagation();
         try {
-            await axios.post(`http://${window.location.host}/api/logout`, {}, { withCredentials: true });
+            await axios.post(`http://localhost:8080/api/logout`, {}, { withCredentials: true });
             navigate("/", { replace: true });
         }
         catch (err) {

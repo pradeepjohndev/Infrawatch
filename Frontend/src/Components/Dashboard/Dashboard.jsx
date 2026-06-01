@@ -3,7 +3,7 @@ import Devices from "../Device";
 import PCPanel from "./Pcpanel";
 import { useLocation } from "react-router-dom";
 import { Computer, Server } from "lucide-react"
-import { useDashboardSocket } from "../Helper/useDashboardSocket";
+import { useDashboardSocket } from "../../Helper/useDashboardSocket";
 
 const getPcType = (pc) => {
   const rawType = pc?.variable ?? pc?.staticInfo?.variable ?? pc?.staticInfo?.system?.variable;

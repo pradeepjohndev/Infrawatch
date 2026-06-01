@@ -8,7 +8,7 @@ export default function AdminRoute({ children }) {
 
   useEffect(() => {
     axios
-      .get(`http://${window.location.host}/api/Authorization`, { withCredentials: true })
+      .get(`http://localhost:8080/api/Authorization`, { withCredentials: true })
       .then((res) => {
         const role = String(res?.data?.role || "").trim().toLowerCase();
         setStatus(role === "admin" ? "ok" : "forbidden");

@@ -4,7 +4,7 @@ import DiskDonut from "../Charts/Diskdonut";
 import Netlog from "../Charts/Netlog";
 import Cpuload from "../Charts/Cpuload";
 import RAMStackedBar from "../Charts/RAMStackedBar";
-import { analyzeHealth } from "../utils/healthAnalyzer";
+import { analyzeHealth } from "../../utils/healthAnalyzer";
 import { GoDotFill } from "react-icons/go";
 import { HardDrive, Wifi, Activity, Laptop, Cpu, ArrowUpRight, ArrowDownRight, CircleArrowRight, CircleArrowDown, Server } from 'lucide-react';
 

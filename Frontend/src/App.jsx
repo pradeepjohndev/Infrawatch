@@ -8,7 +8,7 @@ import Reset from "./Auth/Reset.jsx";
 import "./App.css";
 import "./Style.css";
 
-const Register = lazy(() => import("./Pages/Register"));
+const Register = lazy(() => import("./Auth/Register.jsx"));
 const Home = lazy(() => import("./Pages/Home.jsx"));
 const Inspect = lazy(() => import("./Pages/Inspect.jsx"));
 const Dashboard = lazy(() => import("./Components/Dashboard/Dashboard.jsx"));
