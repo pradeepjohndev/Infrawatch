@@ -5,7 +5,6 @@
 # COPY . .
 # EXPOSE 8080
 # CMD ["node", "Dashboard_server/server.js"]
-
 # docker compose up --build
 
 FROM node:20-alpine

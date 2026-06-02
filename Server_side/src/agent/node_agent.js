@@ -2,9 +2,9 @@ import WebSocket from "ws";
 import dotenv from "dotenv";
 import si, { system } from "systeminformation";
 import os from "os";
-import axios from "axios"
+import axios from "axios";
 
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '../../.env' });
 
 const SERVER_URL = process.env.SERVER_URL;
 console.log("Agent connecting to:", SERVER_URL);
